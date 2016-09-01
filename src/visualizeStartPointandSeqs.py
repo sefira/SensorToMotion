@@ -17,15 +17,16 @@ name = ['accelerometerX','accelerometerY','accelerometerZ','gyroscopeX',
 'gyroscopeY','gyroscopeZ']
 label = 4
 start = 20
-end = 25
+end = 20
 
 for sensor in name:
     figure()
     plot(normalizedSeqs[label][sensor].
-        loc[startPoints[label][start]-100:startPoints[label][end]+100],'b-')
+        loc[startPoints[label][start]-100:startPoints[label][end]+300],'b-')
     
     X = startPoints[label][start:end+1]
     print(X)
+    print(sensor)
     Y = [0] * len(X)
     scatter(X,Y,marker = '^',color = 'r')
     show()
