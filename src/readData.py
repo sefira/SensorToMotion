@@ -9,6 +9,7 @@ def ReadData():
     
     normalizedSensorData = sensorData.copy()
     normalizedSensorData.drop('deviceID',axis=1, inplace=True)
+    sensorData.drop('deviceID',axis=1, inplace=True)
     mean = range(sizeofData[1])
     std = range(sizeofData[1])
     

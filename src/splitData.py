@@ -88,6 +88,14 @@ class splitData:
             UnnormalizedSeqs.append(
                 self.sensorData[self.motionStartTime[i]:self.motionEndTime[i]])
         return UnnormalizedSeqs
+        
+    def GetAllNormalizedData(self):
+        return self.normalizedSensorData.copy()
+        
+    def GetAllUnnormalizedData(self):
+        return self.sensorData.copy()
+        
+        
 '''
 def GetDiscreteStartPoints(sequence):
     start,end = GetSeqStartandEnd()

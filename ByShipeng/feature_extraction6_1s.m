@@ -1,5 +1,7 @@
-function feature = feature_extraction6_1s(data)
-size(data)
+function feature = feature_extraction6_1s(data,varargin)
+if size(varargin) ~= 0
+    printflag = varargin{1};
+end
  ax = data(:,1);
  ay = data(:,2);
  az = data(:,3);
@@ -135,7 +137,7 @@ for i = 1:step:step1
     sumupgx = 0;
     sumupgy = 0;
     sumupgz = 0;
-    for j = 1 : length(ax) - 1
+    for j = i : step - 1
         
         if ax(j + 1) > ax(j)
             upax = upax + 1;
@@ -143,23 +145,23 @@ for i = 1:step:step1
         end
         if ay(j + 1) > ay(j)
             upay = upay + 1;
-            sumupay = sumupay + ax(j+1) - ax(j);
+            sumupay = sumupay + ay(j+1) - ay(j);
         end
         if az(j + 1) > az(j)
             upaz = upaz + 1;
-            sumupaz = sumupaz + ax(j+1) - ax(j);
+            sumupaz = sumupaz + az(j+1) - az(j);
         end
         if gx(j + 1) > gx(j)
             upgx = upgx + 1;
-            sumupgx = sumupgx + ax(j+1) - ax(j);
+            sumupgx = sumupgx + gx(j+1) - gx(j);
         end
         if gy(j + 1) > gy(j)
             upgy = upgy + 1;
-            sumupgy = sumupgy + ax(j+1) - ax(j);
+            sumupgy = sumupgy + gy(j+1) - gy(j);
         end
         if gz(j + 1) > gz(j)
             upgz = upgz + 1;
-            sumupgz = sumupgz + ax(j+1) - ax(j);
+            sumupgz = sumupgz + gz(j+1) - gz(j);
         end
         if acc(j + 1) > acc(j)
             upacc = upacc + 1;
@@ -185,15 +187,21 @@ for i = 1:step:step1
     divgx = meanabsgx / meangxyz;
     divgy = meanabsgy / meangxyz;
     divgz = meanabsgz / meangxyz;
-    
+    if printflag == 1
+        meanabsax
+        meanabsay
+        meanabsaz
+        meanabsgx
+        meanabsgy
+        meanabsgz
+    end
         feature = [feature meanax meanay meanaz meangx meangy meangz meanacc meangxyz...
                 varax varay varaz vargx vargy vargz varacc vargxyz...
                 stdax stday stdaz stdgx stdgy stdgz stdacc stdgxyz...
                 maxax maxay maxaz maxgx maxgy maxgz maxacc maxgxyz... % 25
                 minax minay minaz mingx mingy mingz minacc mingxyz...
-                sumslpax sumslpay sumslpaz sumslpgx sumslpgy sumslpgz ... %41-46
+                sumslpax sumslpay sumslpaz sumslpgx sumslpgy sumslpgz sumslpacc sumslpgxyz... %41-46
                 sumupax sumupay sumupaz sumupgx sumupgy sumupgz ...
-                sumslpacc sumslpgxyz...
                 coraxay coraxaz coraxgx coraxgy coraxgz corayaz ...
                 coraygx coraygy coraygz corazgx corazgy corazgz ...
                 corgxgy corgxgz corgygz...

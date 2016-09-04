@@ -67,7 +67,7 @@ sensor = [ax ay az gx gy gz];
 j = 0;
    for i = act_kind_st(1):step1:act_kind_ed(1)
              j = j + 1;
-            feature(j,:) =[1 feature_extraction6_1s(sensor(i : i + step2-1,:))];
+            feature(j,:) =[1 feature_extraction6_1s(sensor(i : i + step2-1,:),j)];
             dd(j,1) = i;
             if j == 50
                 break;
