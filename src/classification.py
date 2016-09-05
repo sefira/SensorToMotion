@@ -88,6 +88,7 @@ m_startPoints = extractFeature.startPoints
 m_name = readData.name
 
 def ExtractFeatureFromTrain():
+    print "extract feature from train data"
     UnnormalizedData = m_splitdata.GetAllUnnormalizedData()
     #a = UnnormalizedData.copy()
     UnnormalizedData[m_name[0]] = UnnormalizedData[m_name[0]] / 2048
@@ -119,6 +120,7 @@ def ExtractFeatureFromTrain():
     return featureOfSensor
     
 def ExtractFeatureFromTest():
+    print "extract feature from test data"
     UnnormalizedData = m_splitdata.GetAllUnnormalizedData()
     #a = UnnormalizedData.copy()
     UnnormalizedData[m_name[0]] = UnnormalizedData[m_name[0]] / 2048
@@ -146,8 +148,7 @@ m_classifiers = {'KNN':m_classifier.knn_classifier,
                'LR':m_classifier.logistic_regression_classifier,  
                'RF':m_classifier.random_forest_classifier,  
                'DT':m_classifier.decision_tree_classifier,  
-              'SVM':m_classifier.svm_classifier,  
-            'SVMCV':m_classifier.svm_cross_validation,  
+              'SVM':m_classifier.svm_classifier,   
              'GBDT':m_classifier.gradient_boosting_classifier  
              }  
 
@@ -222,3 +223,16 @@ except NameError:
     predictRes = PrediectinAllClassifiers(test_data)
 else:
     print "Predict has been extracted!"
+
+# get the mode of different classifiers, present a vote function
+def ModethePredict():
+    from scipy.stats import mode
+    predictMode = []
+    for i in range(len(test_data)):
+        predictMode.append(1+
+            mode([predictRes['KNN'][i],predictRes['RF'][i],predictRes['GBDT'][i]])[0][0])
+    return predictMode
+
+m_predictMode = ModethePredict()
+from visualizePredictResult import PlotTestSeqandPredictRes
+PlotTestSeqandPredictRes(m_predictMode)
