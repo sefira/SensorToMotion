@@ -22,10 +22,9 @@ else:
 copydata = 0
 flag = 1
 class featureExtractor:
-    def ExtractFeature(self,data):
+    def ExtractTradFeature(self,data):
         data = pd.concat([data],ignore_index=True)
         m_absData = np.abs(data)
-        lengthOfData = len(data)
         step = 50
         windowWidth = 100
         data['acc'] = np.sqrt(np.square(data[name[0]])+
@@ -97,55 +96,28 @@ class featureExtractor:
                     m_div[i] = m_meanabs[i] / m_mean[len(originalName) + 1]
                 
             # concat feature
-            m_featrue = m_featrue+m_mean+m_var+m_std+m_max+m_min+m_sumslp+m_sumup+m_cor+m_up+m_meanabs+m_div
-                
-            global flag
-            if flag == 1:
-                global copydata
-                copydata = data
-                print len(m_mean)
-                print len(m_var)
-                print len(m_std)
-                print len(m_max)
-                print len(m_min)
-                print len(m_sumslp)
-                print len(m_sumup)
-                print len(m_cor)
-                print len(m_up)
-                print len(m_meanabs)
-                print len(m_div)
-                #print m_featrue
-                flag = flag + 1
+            #m_featrue = m_featrue+m_mean+m_var+m_std+m_max+m_min+m_sumslp+m_sumup+m_cor+m_up+m_meanabs+m_div
+            m_featrue = m_featrue+m_mean+m_var+m_std+m_max+m_min+m_sumslp+m_sumup+m_cor+m_meanabs+m_div                
+            
+#            global flag
+#            if flag == 1:
+#                global copydata
+#                copydata = data
+#                print len(m_mean)
+#                print len(m_var)
+#                print len(m_std)
+#                print len(m_max)
+#                print len(m_min)
+#                print len(m_sumslp)
+#                print len(m_sumup)
+#                print len(m_cor)
+#                print len(m_up)
+#                print m_up
+#                print len(m_meanabs)
+#                print len(m_div)
+#                #print m_featrue
+#                flag = flag + 1
         
         return m_featrue
-        
              
-UnnormalizedData = m_splitdata.GetAllUnnormalizedData()
-a = UnnormalizedData.copy()
-UnnormalizedData[name[0]] = UnnormalizedData[name[0]] / 2048
-UnnormalizedData[name[1]] = UnnormalizedData[name[1]] / 2048
-UnnormalizedData[name[2]] = UnnormalizedData[name[2]] / 2048
-UnnormalizedData[name[3]] = UnnormalizedData[name[3]] / 1879.44
-UnnormalizedData[name[4]] = UnnormalizedData[name[4]] / 1879.44
-UnnormalizedData[name[5]] = UnnormalizedData[name[5]] / 1879.44
-
-featureOfSensor = []
-for i in range(len(startPoints)):
-    featureOfSensor.append([])
-    
-windowWidth = 100
-m_featureExtractor = featureExtractor()
-for classIndex in range(len(startPoints)):
-    numLimit = 50
-    numCount = 0
-    for startPos in startPoints[classIndex]:
-        #if classIndex == 4:        
-            #print startPos
-        if numCount < numLimit:
-            numCount = numCount + 1
-            tempFeature = m_featureExtractor.ExtractFeature(
-                UnnormalizedData.loc[startPos-1:startPos+windowWidth-2])
-            featureOfSensor[classIndex].append(tempFeature)
-        else:
-            break
-        
+# end of class featureExtractor define              
