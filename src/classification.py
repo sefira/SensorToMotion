@@ -178,14 +178,12 @@ def PrediectinAllClassifiers(test_data):
                'RF':[],  
                'DT':[],  
               'SVM':[],  
-            'SVMCV':[],  
              'GBDT':[]  
              }  
     for classifier_name in m_classifiers_name: 
-        for i in len(test_data):
-            predictRes[classifier_name].append(
-            m_classifiers[classifier_name].predict(test_data)
-            )
+        for i in range(len(test_data)):
+            predictRes[classifier_name] = \
+                m_classifiers[classifier_name].predict(test_data)
     return predictRes        
               
 # get feature of train and test              
@@ -214,12 +212,13 @@ for i in range(len(featureOfTrain)):
         test_label.append(i)
 TraininAllClassifiers(train_data,train_label,test_data,test_label)
 
-# reshape test data and predict
-test_data = []
-for i in range(len(featureOfTest)):
-    for j in range(len(featureOfTest[i])):
-        test_data.append(featureOfTest[i][j])
-        test_label.append(i)
-predictRes = PrediectinAllClassifiers(test_data)
+# no need to reshape test data and predict
+test_data = featureOfTest
 
-
+try:
+    #notexist
+    predictRes
+except NameError:
+    predictRes = PrediectinAllClassifiers(test_data)
+else:
+    print "Predict has been extracted!"
