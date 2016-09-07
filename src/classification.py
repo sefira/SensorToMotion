@@ -184,7 +184,7 @@ def PrediectinAllClassifiers(test_data):
     for classifier_name in m_classifiers_name: 
         for i in range(len(test_data)):
             predictRes[classifier_name] = \
-                m_classifiers[classifier_name].predict(test_data)
+                 m_classifiers[classifier_name].predict(test_data)
     return predictRes        
               
 # get feature of train and test              
@@ -207,10 +207,10 @@ for i in range(len(featureOfTrain)):
     testNum = 5
     for j in range(len(featureOfTrain[i])-testNum):
         train_data.append(featureOfTrain[i][j])
-        train_label.append(i)
+        train_label.append(i+1)
     for j in range(len(featureOfTrain[i])-testNum,len(featureOfTrain[i])):
         test_data.append(featureOfTrain[i][j])
-        test_label.append(i)
+        test_label.append(i+1)
 TraininAllClassifiers(train_data,train_label,test_data,test_label)
 
 # no need to reshape test data and predict
@@ -229,8 +229,11 @@ def ModethePredict():
     from scipy.stats import mode
     predictMode = []
     for i in range(len(test_data)):
-        predictMode.append(1+
-            mode([predictRes['KNN'][i],predictRes['RF'][i],predictRes['GBDT'][i]])[0][0])
+        predictMode.append(
+            mode([predictRes['LR'][i],
+                  predictRes['KNN'][i],predictRes['KNN'][i],predictRes['KNN'][i],
+                predictRes['RF'][i],
+                predictRes['GBDT'][i]])[0][0])
     return predictMode
 
 m_predictMode = ModethePredict()
