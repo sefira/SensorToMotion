@@ -1,10 +1,10 @@
 import pandas as pd
 
-name = ['accelerometerX','accelerometerY','accelerometerZ','gyroscopeX',
+sensor_name = ['accelerometerX','accelerometerY','accelerometerZ','gyroscopeX',
 'gyroscopeY','gyroscopeZ']
 
-def ReadData():
-    sensorData = pd.read_csv('../data/216_shipeng_lanqiu2.csv')
+def ReadData(filename):
+    sensorData = pd.read_csv(filename)
     sizeofData = sensorData.shape
     
     normalizedSensorData = sensorData.copy()

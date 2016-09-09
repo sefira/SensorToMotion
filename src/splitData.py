@@ -1,18 +1,9 @@
-from readData import *
-
 class splitData:        
-    sensorData, normalizedSensorData = ReadData()
-    
-    motionStartTime = [3650,19700,34000,49240,60800,92500,121200]
-    motionEndTime = [17650,32000,47100,58000,89200,120400,149000]
-    
-    stayDribbleSeq = normalizedSensorData[motionStartTime[0]:motionEndTime[0]]
-    runDribbleSeq = normalizedSensorData[motionStartTime[1]:motionEndTime[1]]
-    walkSeq = normalizedSensorData[motionStartTime[2]:motionEndTime[2]]
-    runSeq = normalizedSensorData[motionStartTime[3]:motionEndTime[3]]
-    shootSeq = normalizedSensorData[motionStartTime[4]:motionEndTime[4]]
-    jumpSeq = normalizedSensorData[motionStartTime[5]:motionEndTime[5]]
-    testSeq = normalizedSensorData[motionStartTime[6]:motionEndTime[6]]
+    def __init__(self,sensorData, normalizedSensorData,motionStartTime,motionEndTime):
+        self.sensorData = sensorData
+        self.normalizedSensorData = normalizedSensorData
+        self.motionStartTime = motionStartTime
+        self.motionEndTime = motionEndTime
 
     # now the most important thing is to split ShootSeq and Jump
     def GetSeqStartandEnd(self,sequence):
@@ -59,35 +50,47 @@ class splitData:
         del startPoints[0]
         return startPoints
         
-    def GetAllSeqStartPoints(self):
+    def GetAllSeqStartPointsForSpecialData(self):
+        
+        stayDribbleSeq = self.normalizedSensorData[self.motionStartTime[0]:self.motionEndTime[0]].copy()
+        runDribbleSeq = self.normalizedSensorData[self.motionStartTime[1]:self.motionEndTime[1]].copy()
+        walkSeq = self.normalizedSensorData[self.motionStartTime[2]:self.motionEndTime[2]].copy()
+        runSeq = self.normalizedSensorData[self.motionStartTime[3]:self.motionEndTime[3]].copy()
+        shootSeq = self.normalizedSensorData[self.motionStartTime[4]:self.motionEndTime[4]].copy()
+        jumpSeq = self.normalizedSensorData[self.motionStartTime[5]:self.motionEndTime[5]].copy()
+        testSeq = self.normalizedSensorData[self.motionStartTime[6]:self.motionEndTime[6]].copy()
+        
         #threshold = [0,0,-0,-0,(2500-1855.7587801291988)/2254.034829804072,(-1000-1855.7587801291988)/2254.034829804072]
         threshold = [0,0,-0,-0,2500,-1000]
         delay = [0,0,0,0,50,20]
-        stayDribbleStartPoints = self.GetStartPointsForContinueSeq(self.stayDribbleSeq)
-        runDribbleStartPoints = self.GetStartPointsForContinueSeq(self.runDribbleSeq)
-        walkStartPoints = self.GetStartPointsForContinueSeq(self.walkSeq)
-        runStartPoints = self.GetStartPointsForContinueSeq(self.runSeq)
+        stayDribbleStartPoints = self.GetStartPointsForContinueSeq(stayDribbleSeq)
+        runDribbleStartPoints = self.GetStartPointsForContinueSeq(runDribbleSeq)
+        walkStartPoints = self.GetStartPointsForContinueSeq(walkSeq)
+        runStartPoints = self.GetStartPointsForContinueSeq(runSeq)
         
         #for shoot
-        shootStartPoints = self.GetStartPointsForShootSeq(self.shootSeq,threshold[4],delay[4])
+        shootStartPoints = self.GetStartPointsForShootSeq(shootSeq,threshold[4],delay[4])
         #for jump
-        jumpStartPoints = self.GetStartPointsForJumpSeq(self.jumpSeq,threshold[5],delay[5])
+        jumpStartPoints = self.GetStartPointsForJumpSeq(jumpSeq,threshold[5],delay[5])
         
-        testStartPoints = self.GetStartPointsForContinueSeq(self.testSeq)    
+        testStartPoints = self.GetStartPointsForContinueSeq(testSeq)    
         return (stayDribbleStartPoints,runDribbleStartPoints,walkStartPoints,
                 runStartPoints,shootStartPoints,jumpStartPoints,
                 testStartPoints)
                 
-    def GetAllNormalizedSeqs(self):
-        return (self.stayDribbleSeq,self.runDribbleSeq,self.walkSeq,
-                self.runSeq,self.shootSeq,self.jumpSeq,self.testSeq)
+    def GetAllNormalizedSeqsForSpecialData(self):
+        NormalizedSeqs = []
+        for i in range(len(self.motionStartTime)):
+            NormalizedSeqs.append(
+                self.normalizedSensorData[self.motionStartTime[i]:self.motionEndTime[i]])
+        return NormalizedSeqs[:]
     
-    def GetAllUnnormalizedSeqs(self):
+    def GetAllUnnormalizedSeqsForSpecialData(self):
         UnnormalizedSeqs = []
         for i in range(len(self.motionStartTime)):
             UnnormalizedSeqs.append(
                 self.sensorData[self.motionStartTime[i]:self.motionEndTime[i]])
-        return UnnormalizedSeqs
+        return UnnormalizedSeqs[:]
         
     def GetAllNormalizedData(self):
         return self.normalizedSensorData.copy()

@@ -1,65 +1,56 @@
-import splitData
 import readData
-name = readData.name
-originalName = name[:]
-name.append('acc')
-name.append('gxyz')
+augmentationName = readData.sensor_name[:]
+originalName = readData.sensor_name[:]
+augmentationName.append('acc')
+augmentationName.append('gxyz')
 
 import numpy as np
 import pandas as pd
-
-try:
-    m_splitdata
-except NameError:
-    m_splitdata = splitData.splitData()
-    startPoints = m_splitdata.GetAllSeqStartPoints()
-    normalizedSeqs = m_splitdata.GetAllNormalizedSeqs()
-    unNormalizedSeqs = m_splitdata.GetAllUnnormalizedSeqs()
-else:
-    #m_splitdata = splitData()
-    print "Data has been split"
     
 copydata = 0
 flag = 1
 class featureExtractor:
-    def ExtractTradFeature(self,data):
+    def __init__(self):
+        self.sensor_name = readData.sensor_name
+        
+    def ExtractTraditonFeature(self,data):
         data = pd.concat([data],ignore_index=True)
         m_absData = np.abs(data)
         step = 50
         windowWidth = 100
-        data['acc'] = np.sqrt(np.square(data[name[0]])+
-            np.square(data[name[1]])+
-            np.square(data[name[2]]))
-        data['gxyz'] = (np.abs(data[name[3]])+
-            np.abs(data[name[4]])+
-            np.abs(data[name[5]]))
+        data['acc'] = np.sqrt(np.square(data[augmentationName[0]])+
+            np.square(data[augmentationName[1]])+
+            np.square(data[augmentationName[2]]))
+        data['gxyz'] = (np.abs(data[augmentationName[3]])+
+            np.abs(data[augmentationName[4]])+
+            np.abs(data[augmentationName[5]]))
         m_featrue = []  
         for partition in range(0,windowWidth,step):
             # avg
-            m_mean = [0] * len(name)
-            for i in range(len(name)):
-                m_mean[i] = np.mean(data[name[i]][partition:partition+step])
+            m_mean = [0] * len(augmentationName)
+            for i in range(len(augmentationName)):
+                m_mean[i] = np.mean(data[augmentationName[i]][partition:partition+step])
             # var
-            m_var = [0] * len(name)
-            for i in range(len(name)):
-                m_var[i] = np.var(data[name[i]][partition:partition+step])
+            m_var = [0] * len(augmentationName)
+            for i in range(len(augmentationName)):
+                m_var[i] = np.var(data[augmentationName[i]][partition:partition+step])
             # std
-            m_std = [0] * len(name)
-            for i in range(len(name)):
-                m_std[i] = np.std(data[name[i]][partition:partition+step])
+            m_std = [0] * len(augmentationName)
+            for i in range(len(augmentationName)):
+                m_std[i] = np.std(data[augmentationName[i]][partition:partition+step])
             # max
-            m_max = [0] * len(name)
-            for i in range(len(name)):
-                m_max[i] = np.max(data[name[i]][partition:partition+step])
+            m_max = [0] * len(augmentationName)
+            for i in range(len(augmentationName)):
+                m_max[i] = np.max(data[augmentationName[i]][partition:partition+step])
             # min
-            m_min = [0] * len(name)
-            for i in range(len(name)):
-                m_min[i] = np.min(data[name[i]][partition:partition+step])
+            m_min = [0] * len(augmentationName)
+            for i in range(len(augmentationName)):
+                m_min[i] = np.min(data[augmentationName[i]][partition:partition+step])
             # sumslp ??? sum of substraction in dislocation
-            m_sumslp = [0] * len(name)
-            for i in range(len(name)):
-                disLocationPre = pd.concat([data[name[i]][partition+1:partition+step-1]],ignore_index=True)
-                disLocationPost = pd.concat([data[name[i]][partition:partition+step-2]],ignore_index=True)
+            m_sumslp = [0] * len(augmentationName)
+            for i in range(len(augmentationName)):
+                disLocationPre = pd.concat([data[augmentationName[i]][partition+1:partition+step-1]],ignore_index=True)
+                disLocationPost = pd.concat([data[augmentationName[i]][partition:partition+step-2]],ignore_index=True)
                 m_sumslp[i] = np.sum(disLocationPre - disLocationPost)/2
             # correlative coefficient
             m_cor = [0] * ((len(originalName) * (len(originalName) - 1))/2)
@@ -69,27 +60,27 @@ class featureExtractor:
             for i in range(len(originalName)):
                 for j in range(i+1,len(originalName)):
                     m_cor[corrCount] = np.sum(
-                    (data[name[i]][partition:partition+step] - m_mean[i]).
-                    mul(data[name[j]][partition:partition+step] - 
+                    (data[augmentationName[i]][partition:partition+step] - m_mean[i]).
+                    mul(data[augmentationName[j]][partition:partition+step] - 
                     m_mean[j])                            
                         ) / (step - 1)
                     corrCount = corrCount + 1
                 #m_fft[i] = np.abs(np.fft.fft(data[name[i]][partition:partition+step]))
                 #m_energy[i] = np.sum(np.square(m_fft[i])) / step
             # sum up
-            m_up = [0] * len(name)
+            m_up = [0] * len(augmentationName)
             m_sumup = [0] * len(originalName)
             for i in range(partition,partition+step-1):
-                for j in range(len(name)):
-                    if data[name[j]][i+1] > data[name[j]][i]:
+                for j in range(len(augmentationName)):
+                    if data[augmentationName[j]][i+1] > data[augmentationName[j]][i]:
                         m_up[j] = m_up[j] + 1
                         if j < len(m_sumup):                        
-                            m_sumup[j] = m_sumup[j] + data[name[j]][i+1] - data[name[j]][i]
+                            m_sumup[j] = m_sumup[j] + data[augmentationName[j]][i+1] - data[augmentationName[j]][i]
             # mean abs
             m_meanabs = [0] * len(originalName)
             m_div = [0] * len(originalName)
             for i in range(len(originalName)):
-                m_meanabs[i] = np.mean(m_absData[name[i]][partition:partition+step])
+                m_meanabs[i] = np.mean(m_absData[augmentationName[i]][partition:partition+step])
                 if i < (len(originalName) / 2):                                        
                     m_div[i] = m_meanabs[i] / m_mean[len(originalName)]
                 else:
@@ -119,5 +110,55 @@ class featureExtractor:
 #                flag = flag + 1
         
         return m_featrue
-             
+    
+    def ExtractFeatureFromTrain(self,m_unnormalizedData,m_startPoints):
+        print "extract feature from train data"
+        UnnormalizedData = m_unnormalizedData.copy()
+        UnnormalizedData[self.sensor_name[0]] = UnnormalizedData[self.sensor_name[0]] / 2048
+        UnnormalizedData[self.sensor_name[1]] = UnnormalizedData[self.sensor_name[1]] / 2048
+        UnnormalizedData[self.sensor_name[2]] = UnnormalizedData[self.sensor_name[2]] / 2048
+        UnnormalizedData[self.sensor_name[3]] = UnnormalizedData[self.sensor_name[3]] / 1879.44
+        UnnormalizedData[self.sensor_name[4]] = UnnormalizedData[self.sensor_name[4]] / 1879.44
+        UnnormalizedData[self.sensor_name[5]] = UnnormalizedData[self.sensor_name[5]] / 1879.44
+        
+        featureOfSensor = []
+        for i in range(len(m_startPoints)-1):
+            featureOfSensor.append([])
+            
+        windowWidth = 100
+        for classIndex in range(len(m_startPoints)-1):
+            numLimit = 50
+            numCount = 0
+            for startPos in m_startPoints[classIndex]:
+                #if classIndex == 4:
+                    #print startPos
+                if numCount < numLimit:
+                    numCount = numCount + 1
+                    tempFeature = self.ExtractTraditonFeature(
+                        UnnormalizedData.loc[startPos-1:startPos+windowWidth-2])
+                    featureOfSensor[classIndex].append(tempFeature)
+                else:
+                    break
+        return featureOfSensor
+        
+    def ExtractFeatureFromTest(self,m_unnormalizedData,m_startPoints):
+        print "extract feature from test data"
+        UnnormalizedData = m_unnormalizedData.copy()
+        UnnormalizedData[self.sensor_name[0]] = UnnormalizedData[self.sensor_name[0]] / 2048
+        UnnormalizedData[self.sensor_name[1]] = UnnormalizedData[self.sensor_name[1]] / 2048
+        UnnormalizedData[self.sensor_name[2]] = UnnormalizedData[self.sensor_name[2]] / 2048
+        UnnormalizedData[self.sensor_name[3]] = UnnormalizedData[self.sensor_name[3]] / 1879.44
+        UnnormalizedData[self.sensor_name[4]] = UnnormalizedData[self.sensor_name[4]] / 1879.44
+        UnnormalizedData[self.sensor_name[5]] = UnnormalizedData[self.sensor_name[5]] / 1879.44
+        
+        featureOfSensor = []        
+        windowWidth = 100
+        classIndex = len(m_startPoints) - 1
+        numCount = 0
+        for startPos in m_startPoints[classIndex]:
+            numCount = numCount + 1
+            tempFeature = self.ExtractTraditonFeature(
+                UnnormalizedData.loc[startPos-1:startPos+windowWidth-2])
+            featureOfSensor.append(tempFeature)
+        return featureOfSensor       
 # end of class featureExtractor define              
