@@ -111,7 +111,7 @@ class featureExtractor:
         
         return m_featrue
     
-    def ExtractFeatureFromTrain(self,m_unnormalizedData,m_startPoints):
+    def ExtractTrainFeatureinShipengStyle(self,m_unnormalizedData,m_startPoints,needBanlance = True):
         print "extract feature from train data"
         UnnormalizedData = m_unnormalizedData.copy()
         UnnormalizedData[self.sensor_name[0]] = UnnormalizedData[self.sensor_name[0]] / 2048
@@ -126,8 +126,13 @@ class featureExtractor:
             featureOfSensor.append([])
             
         windowWidth = 100
-        for classIndex in range(len(m_startPoints)-1):
+        if needBanlance:
+            # if need banlance the data, num limitation set to 50,
+            # so that (number of shoot samples etc.) = (number of run samples etc.) 
             numLimit = 50
+        else:
+            numLimit = 999999
+        for classIndex in range(len(m_startPoints)-1):
             numCount = 0
             for startPos in m_startPoints[classIndex]:
                 #if classIndex == 4:
@@ -141,7 +146,7 @@ class featureExtractor:
                     break
         return featureOfSensor
         
-    def ExtractFeatureFromTest(self,m_unnormalizedData,m_startPoints):
+    def ExtractTestFeatureinShipengStyle(self,m_unnormalizedData,m_startPoints):
         print "extract feature from test data"
         UnnormalizedData = m_unnormalizedData.copy()
         UnnormalizedData[self.sensor_name[0]] = UnnormalizedData[self.sensor_name[0]] / 2048
@@ -153,12 +158,10 @@ class featureExtractor:
         
         featureOfSensor = []        
         windowWidth = 100
-        classIndex = len(m_startPoints) - 1
-        numCount = 0
-        for startPos in m_startPoints[classIndex]:
-            numCount = numCount + 1
+        for startPos in m_startPoints:
             tempFeature = self.ExtractTraditonFeature(
                 UnnormalizedData.loc[startPos-1:startPos+windowWidth-2])
             featureOfSensor.append(tempFeature)
         return featureOfSensor       
-# end of class featureExtractor define              
+# end of class featureExtractor define
+     

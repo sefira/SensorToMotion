@@ -72,29 +72,16 @@ def PrediectinAllClassifiers(test_data):
     return predictRes        
               
 # get feature of train and test  
-label_name = ['stayDribble','runDribble','walk','run','shoot','jump']  
-featrue_of_label = {'stayDribble':[],
-                'runDribble':[],
-                'walk':[],
-                'run':[],
-                'shoot':[],
-                'jump':[]
-             }  
-label_numlabel = {'stayDribble':1,
-                'runDribble':2,
-                'walk':4,
-                'run':5,
-                'shoot':3,
-                'jump':6
- }  
 try:
     #notexist
     featureOfTrain
     featureOfTest
 except NameError:
     m_featureExtractor = extractFeature.featureExtractor()
-    featureOfTrain = m_featureExtractor.ExtractFeatureFromTrain(m_unnormalized_data,m_startPoints)
-    featureOfTest = m_featureExtractor.ExtractFeatureFromTest(m_unnormalized_data,m_startPoints)
+    featureOfTrain = m_featureExtractor.ExtractTrainFeatureinShipengStyle(
+                                        m_unnormalized_data,m_startPoints,True)
+    featureOfTest = m_featureExtractor.ExtractTestFeatureinShipengStyle(
+                                        m_unnormalized_data,m_startPoints[len(m_startPoints)-1])
 else:
     print "Feature has been extracted!"
     
@@ -103,14 +90,22 @@ train_data = []
 train_label = []
 test_data = []
 test_label = []
+label_name = ['stayDribble','runDribble','walk','run','shoot','jump']  
+label_numlabel = {'stayDribble':1,
+                'runDribble':1,
+                'walk':4,
+                'run':5,
+                'shoot':3,
+                'jump':6
+ }  
 for i in range(len(featureOfTrain)):
-    testNum = 5
-    for j in range(len(featureOfTrain[i])-testNum):
+    testSampleNum = 5
+    for j in range(len(featureOfTrain[i])-testSampleNum):
         train_data.append(featureOfTrain[i][j])
-        train_label.append(i+1)
-    for j in range(len(featureOfTrain[i])-testNum,len(featureOfTrain[i])):
+        train_label.append(label_numlabel[label_name[i]])
+    for j in range(len(featureOfTrain[i])-testSampleNum,len(featureOfTrain[i])):
         test_data.append(featureOfTrain[i][j])
-        test_label.append(i+1)
+        test_label.append(label_numlabel[label_name[i]])
 TraininAllClassifiers(train_data,train_label,test_data,test_label)
 
 # no need to reshape test data and predict
@@ -130,10 +125,10 @@ def ModethePredict():
     predictMode = []
     for i in range(len(test_data)):
         predictMode.append(
-            mode([predictRes['LR'][i],
-                  predictRes['KNN'][i],predictRes['KNN'][i],predictRes['KNN'][i],
-                predictRes['RF'][i],
-                predictRes['GBDT'][i]
+            mode([#predictRes['LR'][i],
+                  predictRes['KNN'][i]#,predictRes['KNN'][i],predictRes['KNN'][i],
+                #predictRes['RF'][i]#,
+                #predictRes['GBDT'][i]
                 ])[0][0])
     return predictMode
 
