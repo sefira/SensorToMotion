@@ -164,4 +164,44 @@ class featureExtractor:
             featureOfSensor.append(tempFeature)
         return featureOfSensor       
 # end of class featureExtractor define
-     
+        
+class AdvancedFeatureExtractor(featureExtractor):
+    def ExtractTrainFeatureinShipengStyle(self,m_normalizedData,m_startPoints,needBanlance = True):
+        print "extract feature from train data"
+        m_data = m_normalizedData.copy()        
+        featureOfSensor = []
+        for i in range(len(m_startPoints)-1):
+            featureOfSensor.append([])
+            
+        windowWidth = 100
+        if needBanlance:
+            # if need banlance the data, num limitation set to 50,
+            # so that (number of shoot samples etc.) = (number of run samples etc.) 
+            numLimit = 50
+        else:
+            numLimit = 999999
+        for classIndex in range(len(m_startPoints)-1):
+            numCount = 0
+            for startPos in m_startPoints[classIndex]:
+                #if classIndex == 4:
+                    #print startPos
+                if numCount < numLimit:
+                    numCount = numCount + 1
+                    tempFeature = self.ExtractTraditonFeature(
+                        m_data.loc[startPos-1:startPos+windowWidth-2])
+                    featureOfSensor[classIndex].append(tempFeature)
+                else:
+                    break
+        return featureOfSensor
+        
+    def ExtractTestFeatureinShipengStyle(self,m_normalizedData,m_startPoints):
+        print "extract feature from test data"
+        m_data = m_normalizedData.copy()
+        
+        featureOfSensor = []        
+        windowWidth = 100
+        for startPos in m_startPoints:
+            tempFeature = self.ExtractTraditonFeature(
+                m_data.loc[startPos-1:startPos+windowWidth-2])
+            featureOfSensor.append(tempFeature)
+        return featureOfSensor       

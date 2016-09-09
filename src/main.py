@@ -4,6 +4,8 @@ import extractFeature
 import classification
 
 from sklearn import metrics
+from sklearn import cross_validation
+from sklearn.cross_validation import cross_val_score
 import time
 
 filename = '../data/216_shipeng_lanqiu2.csv'
@@ -28,12 +30,11 @@ else:
 
 m_classifier = classification.classifier()
 m_classifiers_name = ['KNN', 'LR', 'RF', 'DT', 'GBDT']  
-m_classifiers = {'KNN':m_classifier.knn_classifier,  
-               'LR':m_classifier.logistic_regression_classifier,  
-               'RF':m_classifier.random_forest_classifier,  
-               'DT':m_classifier.decision_tree_classifier,  
-              'SVM':m_classifier.svm_classifier,   
-             'GBDT':m_classifier.gradient_boosting_classifier  
+m_classifiers = {'KNN':m_classifier.knn_classifier(),  
+               'LR':m_classifier.logistic_regression_classifier(),  
+               'RF':m_classifier.random_forest_classifier(),  
+               'DT':m_classifier.decision_tree_classifier(),  
+             'GBDT':m_classifier.gradient_boosting_classifier()  
              }  
 
 def TraininAllClassifiers(train_data,train_label,test_data,test_label):
@@ -47,7 +48,7 @@ def TraininAllClassifiers(train_data,train_label,test_data,test_label):
     for classifiers_name_it in m_classifiers_name:  
         print '******************* %s ********************' % classifiers_name_it  
         start_time = time.time()  
-        m_classifiers[classifiers_name_it] = m_classifiers[classifiers_name_it](train_data, train_label)  
+        m_classifiers[classifiers_name_it] = m_classifiers[classifiers_name_it].fit(train_data, train_label)  
         print 'training took %fs!' % (time.time() - start_time)  
         predict = m_classifiers[classifiers_name_it].predict(test_data)
         accuracy = metrics.accuracy_score(test_label, predict)  
@@ -64,13 +65,31 @@ def PrediectinAllClassifiers(test_data):
                'DT':[],  
              'GBDT':[]  
              }  
-    for classifier_name in m_classifiers_name: 
-        print "%s is predicting" % (classifier_name)
+    for classifiers_name_it in m_classifiers_name: 
+        print "%s is predicting" % (classifiers_name_it)
         for i in range(len(test_data)):
-            predictRes[classifier_name] = \
-                 m_classifiers[classifier_name].predict(test_data)
-    return predictRes        
-              
+            predictRes[classifiers_name_it] = \
+                 m_classifiers[classifiers_name_it].predict(test_data)
+    return predictRes
+    
+def CrossValidateClassifiers(times,num_fold,train_data,train_label):
+    CrossValidationScore = {'KNN':0,  
+               'LR':0,  
+               'RF':0,  
+               'DT':0,  
+             'GBDT':0  
+             }
+    for classifiers_name_it in m_classifiers_name:
+        for times_it in range(times):
+            CrossValidationScore[classifiers_name_it] = \
+                CrossValidationScore[classifiers_name_it] + \
+                sum(cross_validation.cross_val_score(
+                m_classifiers[classifiers_name_it], train_data,train_label, cv=num_fold)) / num_fold
+    for classifiers_name_it in m_classifiers_name:
+        CrossValidationScore[classifiers_name_it] = \
+            CrossValidationScore[classifiers_name_it] /times
+    return CrossValidationScore
+    
 # get feature of train and test  
 try:
     #notexist
@@ -99,14 +118,17 @@ label_numlabel = {'stayDribble':1,
                 'jump':6
  }  
 for i in range(len(featureOfTrain)):
-    testSampleNum = 5
-    for j in range(len(featureOfTrain[i])-testSampleNum):
+    for j in range(len(featureOfTrain[i])):
         train_data.append(featureOfTrain[i][j])
         train_label.append(label_numlabel[label_name[i]])
-    for j in range(len(featureOfTrain[i])-testSampleNum,len(featureOfTrain[i])):
-        test_data.append(featureOfTrain[i][j])
-        test_label.append(label_numlabel[label_name[i]])
-TraininAllClassifiers(train_data,train_label,test_data,test_label)
+        
+m_cross_validation_score = CrossValidateClassifiers(2,10,train_data,train_label)
+for m_classifiers_name_it in m_classifiers_name:
+    print "%s score : %f" % (m_classifiers_name_it, m_cross_validation_score[m_classifiers_name_it])
+train_data,test_data,train_label,test_label = cross_validation.train_test_split(
+                            train_data, train_label, test_size=0.5)
+
+#/TraininAllClassifiers(train_data,train_label,test_data,test_label)
 
 # no need to reshape test data and predict
 test_data = featureOfTest
@@ -126,12 +148,12 @@ def ModethePredict():
     for i in range(len(test_data)):
         predictMode.append(
             mode([#predictRes['LR'][i],
-                  predictRes['KNN'][i]#,predictRes['KNN'][i],predictRes['KNN'][i],
-                #predictRes['RF'][i]#,
-                #predictRes['GBDT'][i]
+                  predictRes['KNN'][i],#predictRes['KNN'][i],predictRes['KNN'][i],
+                predictRes['RF'][i],
+                predictRes['GBDT'][i]
                 ])[0][0])
     return predictMode
 
-m_predictMode = ModethePredict()
+#\m_predictMode = ModethePredict()
 from visualizePredictResult import PlotTestSeqandPredictRes
-PlotTestSeqandPredictRes(normalizedSeqs[len(normalizedSeqs)-1]['accelerometerX'],m_predictMode)
+#\PlotTestSeqandPredictRes(normalizedSeqs[len(normalizedSeqs)-1]['accelerometerX'],m_predictMode)
