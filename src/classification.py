@@ -1,3 +1,7 @@
+import time
+from sklearn import metrics
+from sklearn import cross_validation
+
 class classifier:
 
     # Multinomial Naive Bayes Classifier  
@@ -48,19 +52,66 @@ class classifier:
         model = SVC(kernel='rbf', probability=True)  
         return model  
       
-    # SVM Classifier using cross validation  
-    def svm_cross_validation(self):  
-        from sklearn.grid_search import GridSearchCV  
-        from sklearn.svm import SVC  
-        model = SVC(kernel='rbf', probability=True)  
-        param_grid = {'C': [1e-3, 1e-2, 1e-1, 1, 10, 100, 1000], 'gamma': [0.001, 0.0001]}  
-        grid_search = GridSearchCV(model, param_grid, n_jobs = 1, verbose=1)  
-        grid_search.fit(train_x, train_y)  
-        best_parameters = grid_search.best_estimator_.get_params()  
-        for para, val in best_parameters.items():  
-            print para, val  
-        model = SVC(kernel='rbf', C=best_parameters['C'], gamma=best_parameters['gamma'], probability=True)  
-        return model  
-
 # end of class classifier define 
 
+m_classifier = classifier()
+m_classifiers_name = ['KNN', 'LR', 'RF', 'DT', 'GBDT']  
+m_classifiers = {'KNN':m_classifier.knn_classifier(),  
+               'LR':m_classifier.logistic_regression_classifier(),  
+               'RF':m_classifier.random_forest_classifier(),  
+               'DT':m_classifier.decision_tree_classifier(),  
+             'GBDT':m_classifier.gradient_boosting_classifier()  
+             }  
+
+def TraininAllClassifiers(train_data,train_label,test_data,test_label):
+    num_train = len(train_data)
+    num_feat = len(train_data[0])
+    num_test = len(test_data)
+    num_feat = len(test_data[0])
+    print '******************** Data Info *********************'  
+    print '#training data: %d, #testing_data: %d, dimension: %d' % (num_train, num_test, num_feat)  
+    
+    for classifiers_name_it in m_classifiers_name:  
+        print '******************* %s ********************' % classifiers_name_it  
+        start_time = time.time()  
+        m_classifiers[classifiers_name_it] = m_classifiers[classifiers_name_it].fit(train_data, train_label)  
+        print 'training took %fs!' % (time.time() - start_time)  
+        predict = m_classifiers[classifiers_name_it].predict(test_data)
+        accuracy = metrics.accuracy_score(test_label, predict)  
+        print 'accuracy: %.2f%%' % (100 * accuracy)
+        
+def PrediectinAllClassifiers(test_data):
+    num_test = len(test_data)
+    num_feat = len(test_data[0])
+    print '******************** Data Info *********************'  
+    print '#testing_data: %d, dimension: %d' % (num_test, num_feat)  
+    predictRes = {'KNN':[],  
+               'LR':[],  
+               'RF':[],  
+               'DT':[],  
+             'GBDT':[]  
+             }  
+    for classifiers_name_it in m_classifiers_name: 
+        print "%s is predicting" % (classifiers_name_it)
+        for i in range(len(test_data)):
+            predictRes[classifiers_name_it] = \
+                 m_classifiers[classifiers_name_it].predict(test_data)
+    return predictRes
+    
+def CrossValidateClassifiers(times,num_fold,train_data,train_label):
+    CrossValidationScore = {'KNN':0,  
+               'LR':0,  
+               'RF':0,  
+               'DT':0,  
+             'GBDT':0  
+             }
+    for classifiers_name_it in m_classifiers_name:
+        for times_it in range(times):
+            CrossValidationScore[classifiers_name_it] = \
+                CrossValidationScore[classifiers_name_it] + \
+                sum(cross_validation.cross_val_score(
+                m_classifiers[classifiers_name_it], train_data,train_label, cv=num_fold)) / num_fold
+    for classifiers_name_it in m_classifiers_name:
+        CrossValidationScore[classifiers_name_it] = \
+            CrossValidationScore[classifiers_name_it] /times
+    return CrossValidationScore
