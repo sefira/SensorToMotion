@@ -47,3 +47,9 @@ LR score : 0.973333
 RF score : 0.964000
 DT score : 0.787833
 GBDT score : 0.911333
+
+KNN score : 0.940000
+LR score : 0.973333
+RF score : 0.962667
+DT score : 0.782833
+GBDT score : 0.912000

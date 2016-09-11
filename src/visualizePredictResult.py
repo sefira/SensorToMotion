@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
     
-def PlotTestSeqandPredictRes(testSeq,predict):
+def PlotTestSeqandPredictRes(testSeq,predict,title):
     predictSeq = testSeq.copy()
     step = 50
     cursor = predictSeq.index.min()
@@ -9,5 +9,7 @@ def PlotTestSeqandPredictRes(testSeq,predict):
             predictSeq[cursor] = predict[i]
             cursor = cursor + 1
     
+    plt.figure()
     plt.plot(testSeq,'b-')
     plt.plot(predictSeq,'r^')
+    plt.title(title)    

@@ -1,11 +1,8 @@
-class splitData:        
-    def __init__(self,sensorData, normalizedSensorData,motionStartTime,motionEndTime):
+class splitData:
+    def __init__(self,sensorData, normalizedSensorData):
         self.sensorData = sensorData
         self.normalizedSensorData = normalizedSensorData
-        self.motionStartTime = motionStartTime
-        self.motionEndTime = motionEndTime
 
-    # now the most important thing is to split ShootSeq and Jump
     def GetSeqStartandEnd(self,sequence):
         temparr = sequence.index.values
         start = temparr.min()
@@ -18,10 +15,25 @@ class splitData:
         if (end - start < 50):
             return startPoints
         step = 50
-        for i in range(start,end,step):
+        for i in range(start,end-100,step):
             startPoints.append(i)
         return startPoints
         
+    def GetAllNormalizedData(self):
+        return self.normalizedSensorData.copy()
+        
+    def GetAllUnnormalizedData(self):
+        return self.sensorData.copy()
+        
+
+class splitSpecialData(splitData):
+    def __init__(self,sensorData, normalizedSensorData,motionStartTime,motionEndTime):
+        self.sensorData = sensorData
+        self.normalizedSensorData = normalizedSensorData
+        self.motionStartTime = motionStartTime
+        self.motionEndTime = motionEndTime
+
+    # now the most important thing is to split ShootSeq and Jump        
     def GetStartPointsForShootSeq(self,sequence,thre,dela):
         startPoints = []
         start,end = self.GetSeqStartandEnd(sequence)
@@ -50,8 +62,7 @@ class splitData:
         del startPoints[0]
         return startPoints
         
-    def GetAllSeqStartPointsForSpecialData(self):
-        
+    def GetAllSeqStartPointsForSpecialData(self):        
         stayDribbleSeq = self.normalizedSensorData[self.motionStartTime[0]:self.motionEndTime[0]].copy()
         runDribbleSeq = self.normalizedSensorData[self.motionStartTime[1]:self.motionEndTime[1]].copy()
         walkSeq = self.normalizedSensorData[self.motionStartTime[2]:self.motionEndTime[2]].copy()
@@ -74,9 +85,16 @@ class splitData:
         jumpStartPoints = self.GetStartPointsForJumpSeq(jumpSeq,threshold[5],delay[5])
         
         testStartPoints = self.GetStartPointsForContinueSeq(testSeq)    
-        return (stayDribbleStartPoints,runDribbleStartPoints,walkStartPoints,
-                runStartPoints,shootStartPoints,jumpStartPoints,
-                testStartPoints)
+        
+        result = []
+        result.append(stayDribbleStartPoints)
+        result.append(runDribbleStartPoints)
+        result.append(walkStartPoints)
+        result.append(runStartPoints)
+        result.append(shootStartPoints)
+        result.append(jumpStartPoints)
+        result.append(testStartPoints)
+        return result[:]
                 
     def GetAllNormalizedSeqsForSpecialData(self):
         NormalizedSeqs = []
@@ -91,12 +109,6 @@ class splitData:
             UnnormalizedSeqs.append(
                 self.sensorData[self.motionStartTime[i]:self.motionEndTime[i]])
         return UnnormalizedSeqs[:]
-        
-    def GetAllNormalizedData(self):
-        return self.normalizedSensorData.copy()
-        
-    def GetAllUnnormalizedData(self):
-        return self.sensorData.copy()
         
         
 '''
