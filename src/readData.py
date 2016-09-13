@@ -19,5 +19,5 @@ def ReadData(filename):
         std[i] = sensorData.ix[:,i].std()
         normalizedSensorData.ix[:,i] -= mean[i]
         normalizedSensorData.ix[:,i] /= std[i]
-        
+    
     return (sensorData, normalizedSensorData)

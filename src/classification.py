@@ -82,7 +82,7 @@ def TraininAllClassifiers(train_data,train_label,test_data,test_label):
         
 def PrediectinAllClassifiers(test_data):
     num_test = len(test_data)
-    num_feat = len(test_data[0])
+    num_feat = len(test_data.loc[0])
     print '******************** Data Info *********************'  
     print '#testing_data: %d, dimension: %d' % (num_test, num_feat)  
     predictRes = {'KNN':[],  
@@ -93,9 +93,8 @@ def PrediectinAllClassifiers(test_data):
              }  
     for classifiers_name_it in m_classifiers_name: 
         print "%s is predicting" % (classifiers_name_it)
-        for i in range(len(test_data)):
-            predictRes[classifiers_name_it] = \
-                 m_classifiers[classifiers_name_it].predict(test_data)
+        predictRes[classifiers_name_it] = \
+             m_classifiers[classifiers_name_it].predict(test_data)
     return predictRes
     
 def CrossValidateClassifiers(times,num_fold,train_data,train_label):

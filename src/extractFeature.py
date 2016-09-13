@@ -11,6 +11,7 @@ copydata = 0
 flag = 1
 class featureExtractor:
     def __init__(self):
+        print "******** featureExtractor init **********"
         self.sensor_name = readData.sensor_name
         
     def ExtractTraditonFeature(self,data):
@@ -24,7 +25,7 @@ class featureExtractor:
         data['gxyz'] = (np.abs(data[augmentationName[3]])+
             np.abs(data[augmentationName[4]])+
             np.abs(data[augmentationName[5]]))
-        m_featrue = []  
+        m_featrue = pd.DataFrame()
         for partition in range(0,windowWidth,step):
             # avg
             m_mean = [0] * len(augmentationName)
@@ -88,7 +89,8 @@ class featureExtractor:
                 
             # concat feature
             #m_featrue = m_featrue+m_mean+m_var+m_std+m_max+m_min+m_sumslp+m_sumup+m_cor+m_up+m_meanabs+m_div
-            m_featrue = m_featrue+m_mean+m_var+m_std+m_max+m_min+m_sumslp+m_sumup+m_cor+m_meanabs+m_div                
+            m_featrue = m_featrue.append(
+                    m_mean+m_var+m_std+m_max+m_min+m_sumslp+m_sumup+m_cor+m_meanabs+m_div)
             
 #            global flag
 #            if flag == 1:
@@ -108,10 +110,12 @@ class featureExtractor:
 #                print len(m_div)
 #                #print m_featrue
 #                flag = flag + 1
-        
+        m_featrue.reset_index(drop=True,inplace=True)
+        m_featrue = m_featrue.T
         return m_featrue
         
     def ExtractFeatureinShipengStyle(self,m_unnormalizedData,m_startPoints,needBanlance = True):
+        print "**********extract feature**********"        
         UnnormalizedData = m_unnormalizedData.copy()
         UnnormalizedData[self.sensor_name[0]] = UnnormalizedData[self.sensor_name[0]] / 2048
         UnnormalizedData[self.sensor_name[1]] = UnnormalizedData[self.sensor_name[1]] / 2048
@@ -120,7 +124,7 @@ class featureExtractor:
         UnnormalizedData[self.sensor_name[4]] = UnnormalizedData[self.sensor_name[4]] / 1879.44
         UnnormalizedData[self.sensor_name[5]] = UnnormalizedData[self.sensor_name[5]] / 1879.44
         
-        featureOfSensor = []        
+        featureOfSensor = pd.DataFrame()        
         windowWidth = 100
         if needBanlance:
             # if need banlance the data, num limitation set to 50,
@@ -134,10 +138,12 @@ class featureExtractor:
                 numCount = numCount + 1
                 tempFeature = self.ExtractTraditonFeature(
                     UnnormalizedData.loc[startPos:startPos+windowWidth-1])
-                featureOfSensor.append(tempFeature)
+                featureOfSensor = featureOfSensor.append(tempFeature)
+        featureOfSensor.reset_index(drop=True,inplace=True)
         return featureOfSensor
         
     def ExtractFeatureForSpecialDatainShipengStyle(self,m_unnormalizedData,m_startPoints,needBanlance = True):
+        print "**********extract feature**********"
         UnnormalizedData = m_unnormalizedData.copy()
         UnnormalizedData[self.sensor_name[0]] = UnnormalizedData[self.sensor_name[0]] / 2048
         UnnormalizedData[self.sensor_name[1]] = UnnormalizedData[self.sensor_name[1]] / 2048
@@ -148,7 +154,7 @@ class featureExtractor:
         
         featureOfSensor = []
         for i in range(len(m_startPoints)-1):
-            featureOfSensor.append([])
+            featureOfSensor.append(pd.DataFrame())
             
         windowWidth = 100
         if needBanlance:
@@ -164,20 +170,25 @@ class featureExtractor:
                     numCount = numCount + 1
                     tempFeature = self.ExtractTraditonFeature(
                         UnnormalizedData.loc[startPos:startPos+windowWidth-1])
-                    featureOfSensor[classIndex].append(tempFeature)
+                    featureOfSensor[classIndex] = featureOfSensor[classIndex].append(tempFeature)
                 else:
                     break
+            featureOfSensor[classIndex].reset_index(drop=True,inplace=True)
         return featureOfSensor
 
 # end of class featureExtractor define
         
 class AdvancedFeatureExtractor(featureExtractor):
-    def ExtractTrainFeatureinShipengStyle(self,m_normalizedData,m_startPoints,needBanlance = True):
-        print "extract feature from train data"
+    def __init__(self):
+        self.sensor_name = readData.sensor_name
+        print "****** AdvancedFeatureExtractor init ********"
+
+    def ExtractFeatureForSpecialDatainShipengStyle(self,m_normalizedData,m_startPoints,needBanlance = True):
+        print "**********extract advance feature**********"
         m_data = m_normalizedData.copy()        
         featureOfSensor = []
         for i in range(len(m_startPoints)-1):
-            featureOfSensor.append([])
+            featureOfSensor.append(pd.DataFrame())
             
         windowWidth = 100
         if needBanlance:
@@ -195,19 +206,23 @@ class AdvancedFeatureExtractor(featureExtractor):
                     numCount = numCount + 1
                     tempFeature = self.ExtractTraditonFeature(
                         m_data.loc[startPos:startPos+windowWidth-1])
-                    featureOfSensor[classIndex].append(tempFeature)
+                    featureOfSensor[classIndex] = featureOfSensor[classIndex].append(tempFeature)
                 else:
                     break
+            featureOfSensor[classIndex].reset_index(drop=True,inplace=True)
         return featureOfSensor
         
-    def ExtractTestFeatureinShipengStyle(self,m_normalizedData,m_startPoints):
-        print "extract feature from test data"
+    def ExtractTestFeatureinShipengStyle(self,m_normalizedData,m_startPoints,needBanlance = True):
+        print "**********extract advance feature**********"
         m_data = m_normalizedData.copy()
         
-        featureOfSensor = []        
+        featureOfSensor = pd.DataFrame()
         windowWidth = 100
         for startPos in m_startPoints:
             tempFeature = self.ExtractTraditonFeature(
                 m_data.loc[startPos-1:startPos+windowWidth-2])
-            featureOfSensor.append(tempFeature)
-        return featureOfSensor       
+            featureOfSensor = featureOfSensor.append(tempFeature)
+        featureOfSensor.reset_index(drop=True,inplace=True)
+        return featureOfSensor  
+        
+# end of class AdvancedFeatureExtractor define

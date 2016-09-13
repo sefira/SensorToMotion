@@ -8,6 +8,7 @@ from classification import PrediectinAllClassifiers
 from visualizePredictResult import PlotTestSeqandPredictRes
 
 from sklearn import cross_validation
+import pandas as pd
 
 ###########################################
 ########### start to read data ############
@@ -28,7 +29,7 @@ except NameError:
     motionEndTime = [17650,32000,47100,58000,89200,120400,149000]
     m_split_traindata = splitData.splitSpecialData(train_sensorData,train_normalizedSensorData,motionStartTime,motionEndTime)
     m_startPoints_traindata = m_split_traindata.GetAllSeqStartPointsForSpecialData()
-    m_normalized_trainSeqs = m_split_traindata.GetAllNormalizedSeqsForSpecialData()
+    m_normalized_traindata = m_split_traindata.GetAllNormalizedData()
     m_unnormalized_traindata = m_split_traindata.GetAllUnnormalizedData()
     
     m_split_noisedata = splitData.splitData(noise_sensorData,noise_normalizedSensorData)
@@ -57,22 +58,30 @@ try:
     featureOf_TestinReal
 except NameError:
     m_featureExtractor = extractFeature.featureExtractor()
+    m_traindata = m_unnormalized_traindata
+    m_noisedata = m_unnormalized_noisedata
+    m_testdata = m_unnormalized_testdata
+    
+#    m_featureExtractor = extractFeature.AdvancedFeatureExtractor()
+#    m_traindata = m_normalized_traindata
+#    m_noisedata = m_normalized_noisedata
+#    m_testdata = m_normalized_testdata
     print "extract feature from train data"
     featureOf_Train = m_featureExtractor.ExtractFeatureForSpecialDatainShipengStyle(
-                                        m_unnormalized_traindata,
+                                        m_traindata,
                                         m_startPoints_traindata,True)
     print "extract feature from test data in train"
     featureOf_TestinTrain = m_featureExtractor.ExtractFeatureinShipengStyle(
-                                        m_unnormalized_traindata,
+                                        m_traindata,
                                         m_startPoints_traindata[
                                         len(m_startPoints_traindata)-1],False)
     print "extract feature from noise data"
     featureOf_Noise = m_featureExtractor.ExtractFeatureinShipengStyle(
-                                        m_unnormalized_noisedata,
+                                        m_noisedata,
                                         m_startPoints_noisedata,True)
     print "extract feature from test data in real"
     featureOf_TestinReal = m_featureExtractor.ExtractFeatureinShipengStyle(
-                                        m_unnormalized_testdata,
+                                        m_testdata,
                                         m_startPoints_testdata,False)
     featureOf_Train.append(featureOf_Noise)
 else:
@@ -83,9 +92,9 @@ else:
 ###########################################
 
 # reshape train data and train the model
-train_data = []
+train_data = pd.DataFrame()
 train_label = []
-test_data = []
+test_data = pd.DataFrame()
 test_label = []
 label_name = ['stayDribble','runDribble','walk','run','shoot','jump','noise']  
 label_numlabel = {'stayDribble':1,
@@ -98,7 +107,7 @@ label_numlabel = {'stayDribble':1,
  }  
 for i in range(len(featureOf_Train)):
     for j in range(len(featureOf_Train[i])):
-        train_data.append(featureOf_Train[i][j])
+        train_data = train_data.append(featureOf_Train[i].loc[j])
         train_label.append(label_numlabel[label_name[i]])
         
 m_cross_validation_score = CrossValidateClassifiers(times=20,num_fold=2,train_data=train_data,train_label=train_label)
@@ -106,7 +115,7 @@ for m_classifiers_name_it in m_classifiers_name:
     print "%s score : %f" % (m_classifiers_name_it, m_cross_validation_score[m_classifiers_name_it])
 
 train_data,test_data,train_label,test_label = cross_validation.train_test_split(
-                            train_data, train_label, test_size=0.1)
+                            train_data, train_label, test_size=0.5)
 print "training classifiers:"
 TraininAllClassifiers(train_data,train_label,test_data,test_label)
 
@@ -129,18 +138,16 @@ def ModethePredict(test_data,predictRes):
                 predictRes['GBDT'][i]#,predictRes['GBDT'][i]
                 ])[0][0])
     return predictMode
-
 try:
     #notexist
     predictRes
 except NameError:
-    print "testing in naive test data:"
     predictRes = PrediectinAllClassifiers(test_naivedata)
 else:
     print "Predict has been extracted!"
 m_predictMode = ModethePredict(test_naivedata,predictRes)
-#PlotTestSeqandPredictRes(m_normalized_trainSeqs[len(m_normalized_trainSeqs)-1]['accelerometerX'],m_predictMode,'MODE')
-
+PlotTestSeqandPredictRes(m_normalized_traindata.loc[121200:149000]['accelerometerX'],m_predictMode,'MODE')
+    
 try:
     #notexist
     predictResinReal
