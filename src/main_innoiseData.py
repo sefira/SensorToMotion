@@ -101,9 +101,9 @@ for i in range(len(featureOf_Train)):
         train_data.append(featureOf_Train[i][j])
         train_label.append(label_numlabel[label_name[i]])
         
-#/m_cross_validation_score = CrossValidateClassifiers(times=20,num_fold=2,train_data=train_data,train_label=train_label)
-#/for m_classifiers_name_it in m_classifiers_name:
-#/    print "%s score : %f" % (m_classifiers_name_it, m_cross_validation_score[m_classifiers_name_it])
+m_cross_validation_score = CrossValidateClassifiers(times=20,num_fold=2,train_data=train_data,train_label=train_label)
+for m_classifiers_name_it in m_classifiers_name:
+    print "%s score : %f" % (m_classifiers_name_it, m_cross_validation_score[m_classifiers_name_it])
 
 train_data,test_data,train_label,test_label = cross_validation.train_test_split(
                             train_data, train_label, test_size=0.1)
@@ -126,7 +126,7 @@ def ModethePredict(test_data,predictRes):
             mode([predictRes['LR'][i],
                   predictRes['KNN'][i],#predictRes['KNN'][i],predictRes['KNN'][i],
                 predictRes['RF'][i],
-                predictRes['GBDT'][i],predictRes['GBDT'][i]
+                predictRes['GBDT'][i]#,predictRes['GBDT'][i]
                 ])[0][0])
     return predictMode
 
@@ -139,10 +139,10 @@ except NameError:
 else:
     print "Predict has been extracted!"
 m_predictMode = ModethePredict(test_naivedata,predictRes)
-#/PlotTestSeqandPredictRes(m_normalized_trainSeqs[len(m_normalized_trainSeqs)-1]['accelerometerX'],m_predictMode)
+#PlotTestSeqandPredictRes(m_normalized_trainSeqs[len(m_normalized_trainSeqs)-1]['accelerometerX'],m_predictMode,'MODE')
 
 try:
-    notexist
+    #notexist
     predictResinReal
 except NameError:
     print "testing in real test data:"
