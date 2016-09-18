@@ -24,6 +24,8 @@ test_sensorData,test_normalizedSensorData = readData.ReadData(test_filename)
 
 try:
     m_split_traindata
+    m_split_noisedata
+    m_split_testdata
 except NameError:
     motionStartTime = [3650,19700,34000,49240,60800,92500,121200]
     motionEndTime = [17650,32000,47100,58000,89200,120400,149000]
@@ -84,6 +86,11 @@ except NameError:
                                         m_testdata,
                                         m_startPoints_testdata,False)
     featureOf_Train.append(featureOf_Noise)
+    
+    import matplotlib.pyplot as plt
+    for i in range(len(featureOf_Train)):
+        plt.figure()
+        plt.plot(featureOf_Train[i][0])
 else:
     print "Feature has been extracted!"
 
@@ -109,13 +116,14 @@ for i in range(len(featureOf_Train)):
     for j in range(len(featureOf_Train[i])):
         train_data = train_data.append(featureOf_Train[i].loc[j])
         train_label.append(label_numlabel[label_name[i]])
-        
+
+print "cross validation:"
 m_cross_validation_score = CrossValidateClassifiers(times=20,num_fold=2,train_data=train_data,train_label=train_label)
 for m_classifiers_name_it in m_classifiers_name:
     print "%s score : %f" % (m_classifiers_name_it, m_cross_validation_score[m_classifiers_name_it])
 
 train_data,test_data,train_label,test_label = cross_validation.train_test_split(
-                            train_data, train_label, test_size=0.5)
+                            train_data, train_label, test_size=0.1)
 print "training classifiers:"
 TraininAllClassifiers(train_data,train_label,test_data,test_label)
 
@@ -139,7 +147,7 @@ def ModethePredict(test_data,predictRes):
                 ])[0][0])
     return predictMode
 try:
-    #notexist
+    notexist
     predictRes
 except NameError:
     predictRes = PrediectinAllClassifiers(test_naivedata)
@@ -149,7 +157,7 @@ m_predictMode = ModethePredict(test_naivedata,predictRes)
 PlotTestSeqandPredictRes(m_normalized_traindata.loc[121200:149000]['accelerometerX'],m_predictMode,'MODE')
     
 try:
-    #notexist
+    notexist
     predictResinReal
 except NameError:
     print "testing in real test data:"
