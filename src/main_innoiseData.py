@@ -9,6 +9,7 @@ from visualizePredictResult import PlotTestSeqandPredictRes
 
 from sklearn import cross_validation
 import pandas as pd
+import matplotlib.pyplot as plt
 
 ###########################################
 ########### start to read data ############
@@ -53,7 +54,6 @@ else:
 
 # get feature of train and test  
 try:
-    #notexist
     import utils
     featureOf_Train = utils.readListfromCSV(7,'featureOf_Train_Datadiv2048_featureUnnor')
     featureOf_TestinTrain = utils.readDataFramefromCSV('featureOf_TestinTrain_Datadiv2048_featureUnnor')
@@ -93,12 +93,24 @@ except IOError:
     utils.saveDataFrametoCSV(featureOf_Noise,'featureOf_Noise_Datadiv2048_featureUnnor')
     utils.saveDataFrametoCSV(featureOf_TestinReal,'featureOf_TestinReal_Datadiv2048_featureUnnor')
     
-#    import matplotlib.pyplot as plt
-#    for i in range(len(featureOf_Train)):
-#        plt.figure()
-#        plt.plot(featureOf_Train[i][0])
 else:
     print "Feature has been loaded!"
+
+
+###########################################
+############# normalize data ##############
+###########################################
+for i in range(len(featureOf_Train)):
+    plt.figure()
+    plt.plot(featureOf_Train[i][0])
+m_featureExtractor = extractFeature.AdvancedFeatureExtractor()
+featureOf_Train = m_featureExtractor.normalizeData(featureOf_Train)
+featureOf_TestinTrain = m_featureExtractor.normalizeData(featureOf_TestinTrain)
+featureOf_Noise = m_featureExtractor.normalizeData(featureOf_Noise)
+featureOf_TestinReal = m_featureExtractor.normalizeData(featureOf_TestinReal)
+for i in range(len(featureOf_Train)):
+    plt.figure()
+    plt.plot(featureOf_Train[i][0])
 
 ###########################################
 ####### start to train and classify #######
