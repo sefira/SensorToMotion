@@ -54,20 +54,21 @@ else:
 # get feature of train and test  
 try:
     #notexist
-    featureOf_Train
-    featureOf_TestinTrain
-    featureOf_Noise
-    featureOf_TestinReal
-except NameError:
-    m_featureExtractor = extractFeature.featureExtractor()
-    m_traindata = m_unnormalized_traindata
-    m_noisedata = m_unnormalized_noisedata
-    m_testdata = m_unnormalized_testdata
+    import utils
+    featureOf_Train = utils.readListfromCSV(7,'featureOf_Train_Datadiv2048_featureUnnor')
+    featureOf_TestinTrain = utils.readDataFramefromCSV('featureOf_TestinTrain_Datadiv2048_featureUnnor')
+    featureOf_Noise = utils.readDataFramefromCSV('featureOf_Noise_Datadiv2048_featureUnnor')
+    featureOf_TestinReal= utils.readDataFramefromCSV('featureOf_TestinReal_Datadiv2048_featureUnnor')
+except IOError:
+#    m_featureExtractor = extractFeature.featureExtractor()
+#    m_traindata = m_unnormalized_traindata
+#    m_noisedata = m_unnormalized_noisedata
+#    m_testdata = m_unnormalized_testdata
     
-#    m_featureExtractor = extractFeature.AdvancedFeatureExtractor()
-#    m_traindata = m_normalized_traindata
-#    m_noisedata = m_normalized_noisedata
-#    m_testdata = m_normalized_testdata
+    m_featureExtractor = extractFeature.AdvancedFeatureExtractor()
+    m_traindata = m_normalized_traindata
+    m_noisedata = m_normalized_noisedata
+    m_testdata = m_normalized_testdata
     print "extract feature from train data"
     featureOf_Train = m_featureExtractor.ExtractFeatureForSpecialDatainShipengStyle(
                                         m_traindata,
@@ -86,13 +87,18 @@ except NameError:
                                         m_testdata,
                                         m_startPoints_testdata,False)
     featureOf_Train.append(featureOf_Noise)
+    print "save feature in intermedia fold!"
+    utils.saveListtoCSV(featureOf_Train,'featureOf_Train_Datadiv2048_featureUnnor')
+    utils.saveDataFrametoCSV(featureOf_TestinTrain,'featureOf_TestinTrain_Datadiv2048_featureUnnor')
+    utils.saveDataFrametoCSV(featureOf_Noise,'featureOf_Noise_Datadiv2048_featureUnnor')
+    utils.saveDataFrametoCSV(featureOf_TestinReal,'featureOf_TestinReal_Datadiv2048_featureUnnor')
     
-    import matplotlib.pyplot as plt
-    for i in range(len(featureOf_Train)):
-        plt.figure()
-        plt.plot(featureOf_Train[i][0])
+#    import matplotlib.pyplot as plt
+#    for i in range(len(featureOf_Train)):
+#        plt.figure()
+#        plt.plot(featureOf_Train[i][0])
 else:
-    print "Feature has been extracted!"
+    print "Feature has been loaded!"
 
 ###########################################
 ####### start to train and classify #######
@@ -140,7 +146,7 @@ def ModethePredict(test_data,predictRes):
     predictMode = []
     for i in range(len(test_data)):
         predictMode.append(
-            mode([predictRes['LR'][i],
+            mode([#predictRes['LR'][i],
                   predictRes['KNN'][i],#predictRes['KNN'][i],predictRes['KNN'][i],
                 predictRes['RF'][i],
                 predictRes['GBDT'][i]#,predictRes['GBDT'][i]

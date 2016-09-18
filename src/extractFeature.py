@@ -114,8 +114,19 @@ class featureExtractor:
         m_featrue = m_featrue.T
         return m_featrue
         
+    def normalizeData(self,ori_data):
+        print "********** normalize data ***********"
+        if type(ori_data) is list:
+            data = ori_data[:]
+            for i in range(len(ori_data)):
+                data[i] = (ori_data[i] - ori_data[i].mean())/ori_data[i].std()
+        else:
+            data = ori_data.copy()
+            data = (ori_data - ori_data.mean()) / ori_data.std()
+        return data
+        
     def ExtractFeatureinShipengStyle(self,m_unnormalizedData,m_startPoints,needBanlance = True):
-        print "**********extract feature**********"        
+        print "********** extract feature **********"        
         UnnormalizedData = m_unnormalizedData.copy()
         UnnormalizedData[self.sensor_name[0]] = UnnormalizedData[self.sensor_name[0]] / 2048
         UnnormalizedData[self.sensor_name[1]] = UnnormalizedData[self.sensor_name[1]] / 2048
@@ -140,13 +151,10 @@ class featureExtractor:
                     UnnormalizedData.loc[startPos:startPos+windowWidth-1])
                 featureOfSensor = featureOfSensor.append(tempFeature)
         featureOfSensor.reset_index(drop=True,inplace=True)
-        print "**********normalize feature**********"
-        featureOfSensor -= featureOfSensor.mean()
-        featureOfSensor /= featureOfSensor.std()
         return featureOfSensor
         
     def ExtractFeatureForSpecialDatainShipengStyle(self,m_unnormalizedData,m_startPoints,needBanlance = True):
-        print "**********extract feature**********"
+        print "********** extract feature **********"
         UnnormalizedData = m_unnormalizedData.copy()
         UnnormalizedData[self.sensor_name[0]] = UnnormalizedData[self.sensor_name[0]] / 2048
         UnnormalizedData[self.sensor_name[1]] = UnnormalizedData[self.sensor_name[1]] / 2048
@@ -177,12 +185,9 @@ class featureExtractor:
                 else:
                     break
             featureOfSensor[classIndex].reset_index(drop=True,inplace=True)
-            print "**********normalize feature**********"
-            featureOfSensor[classIndex] -= featureOfSensor[classIndex].mean()
-            featureOfSensor[classIndex] /= featureOfSensor[classIndex].std()
-            import matplotlib.pyplot as plt
-            plt.figure()
-            plt.plot(featureOfSensor[classIndex][0])
+#            import matplotlib.pyplot as plt
+#            plt.figure()
+#            plt.plot(featureOfSensor[classIndex][0])
         return featureOfSensor
 
 # end of class featureExtractor define
@@ -193,7 +198,7 @@ class AdvancedFeatureExtractor(featureExtractor):
         print "****** AdvancedFeatureExtractor init ********"
 
     def ExtractFeatureForSpecialDatainShipengStyle(self,m_normalizedData,m_startPoints,needBanlance = True):
-        print "**********extract advance feature**********"
+        print "********** extract advance feature **********"
         m_data = m_normalizedData.copy()        
         featureOfSensor = []
         for i in range(len(m_startPoints)-1):
@@ -217,12 +222,10 @@ class AdvancedFeatureExtractor(featureExtractor):
                 else:
                     break
             featureOfSensor[classIndex].reset_index(drop=True,inplace=True)
-            #featureOfSensor[classIndex] -= featureOfSensor[classIndex].mean()
-            #featureOfSensor[classIndex] /= featureOfSensor[classIndex].std()
         return featureOfSensor
         
     def ExtractFeatureinShipengStyle(self,m_normalizedData,m_startPoints,needBanlance = True):
-        print "**********extract advance feature**********"
+        print "********** extract advance feature **********"
         m_data = m_normalizedData.copy()
         
         featureOfSensor = pd.DataFrame()
@@ -243,8 +246,6 @@ class AdvancedFeatureExtractor(featureExtractor):
             else:
                 break
         featureOfSensor.reset_index(drop=True,inplace=True)
-        #featureOfSensor -= featureOfSensor.mean()
-        #featureOfSensor /= featureOfSensor.std()
         return featureOfSensor  
         
 # end of class AdvancedFeatureExtractor define

@@ -64,10 +64,10 @@ m_classifiers = {'KNN':m_classifier.knn_classifier(),
              }  
 
 def TraininAllClassifiers(train_data,train_label,test_data,test_label):
-    num_train = len(train_data)
-    num_feat = len(train_data[0])
-    num_test = len(test_data)
-    num_feat = len(test_data[0])
+    num_train = train_data.shape[0]
+    num_feat = train_data.shape[1]
+    num_test = test_data.shape[0]
+    num_feat = test_data.shape[1]
     print '******************** Data Info *********************'  
     print '#training data: %d, #testing_data: %d, dimension: %d' % (num_train, num_test, num_feat)  
     
@@ -81,8 +81,8 @@ def TraininAllClassifiers(train_data,train_label,test_data,test_label):
         print 'accuracy: %.2f%%' % (100 * accuracy)
         
 def PrediectinAllClassifiers(test_data):
-    num_test = len(test_data)
-    num_feat = len(test_data.loc[0])
+    num_test = test_data.shape[0]
+    num_feat = test_data.shape[1]
     print '******************** Data Info *********************'  
     print '#testing_data: %d, dimension: %d' % (num_test, num_feat)  
     predictRes = {'KNN':[],  
