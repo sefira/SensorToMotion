@@ -96,22 +96,6 @@ except IOError:
 else:
     print "Feature has been loaded!"
 
-
-###########################################
-############# normalize data ##############
-###########################################
-for i in range(len(featureOf_Train)):
-    plt.figure()
-    plt.plot(featureOf_Train[i][0])
-m_featureExtractor = extractFeature.AdvancedFeatureExtractor()
-featureOf_Train = m_featureExtractor.normalizeData(featureOf_Train)
-featureOf_TestinTrain = m_featureExtractor.normalizeData(featureOf_TestinTrain)
-featureOf_Noise = m_featureExtractor.normalizeData(featureOf_Noise)
-featureOf_TestinReal = m_featureExtractor.normalizeData(featureOf_TestinReal)
-for i in range(len(featureOf_Train)):
-    plt.figure()
-    plt.plot(featureOf_Train[i][0])
-
 ###########################################
 ####### start to train and classify #######
 ###########################################
@@ -134,6 +118,18 @@ for i in range(len(featureOf_Train)):
     for j in range(len(featureOf_Train[i])):
         train_data = train_data.append(featureOf_Train[i].loc[j])
         train_label.append(label_numlabel[label_name[i]])
+        
+###########################################
+############# normalize data ##############
+###########################################
+#plt.figure()
+#plt.plot(train_data[0])
+#m_featureExtractor = extractFeature.AdvancedFeatureExtractor()
+#train_data = m_featureExtractor.normalizeData(train_data)
+#featureOf_TestinTrain = m_featureExtractor.normalizeData(featureOf_TestinTrain)
+#featureOf_TestinReal = m_featureExtractor.normalizeData(featureOf_TestinReal)
+#plt.figure()
+#plt.plot(train_data[0])
 
 print "cross validation:"
 m_cross_validation_score = CrossValidateClassifiers(times=20,num_fold=2,train_data=train_data,train_label=train_label)
