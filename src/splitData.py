@@ -62,7 +62,7 @@ class splitSpecialData(splitData):
         del startPoints[0]
         return startPoints
         
-    def GetAllSeqStartPointsForSpecialData(self):        
+    def GetAllSeqStartPointsFor_216_shipeng_lanqiu2(self):        
         stayDribbleSeq = self.normalizedSensorData[self.motionStartTime[0]:self.motionEndTime[0]].copy()
         runDribbleSeq = self.normalizedSensorData[self.motionStartTime[1]:self.motionEndTime[1]].copy()
         walkSeq = self.normalizedSensorData[self.motionStartTime[2]:self.motionEndTime[2]].copy()
@@ -93,6 +93,44 @@ class splitSpecialData(splitData):
         result.append(runStartPoints)
         result.append(shootStartPoints)
         result.append(jumpStartPoints)
+        result.append(testStartPoints)
+        return result[:]
+        
+    def GetStartPointsForCatchPassSeq(self,sequence):
+        catchStartPoints = []
+        passStartPoints = []
+        start,end = self.GetSeqStartandEnd(sequence)
+        if(end - start < 50):
+            return (passStartPoints,catchStartPoints)
+        threshold = [1000,4000]
+        delay = [30,30]
+        step = [50,100]
+        catchStartPoints.append(start - step[1]*5)
+        passStartPoints.append(start - step[1]*5)
+        for i in range(start,end):
+            if (self.sensorData['accelerometerX'].loc[i] < threshold[0]) and ((i - catchStartPoints[-1]) > 5*step[1]):
+                catchStartPoints.append(i - delay[0] + 1)
+                for j in range(i+step[1],i+5*step[1]):
+                    if j > 41600:
+                        j = j
+                    if (self.sensorData['accelerometerX'].loc[j] > threshold[1]):
+                        passStartPoints.append(j - delay[1] + 1)
+                        break
+        del catchStartPoints[0]
+        del passStartPoints[0]
+        return (catchStartPoints,passStartPoints)
+        
+    def GetAllSeqStartPointsFor_253_0909_passcatch(self):
+        catchpassSeq = self.normalizedSensorData[self.motionStartTime[0]:self.motionEndTime[0]].copy()
+        testSeq = self.normalizedSensorData[self.motionStartTime[-1]:self.motionEndTime[-1]].copy()
+        
+        # for pass and catch
+        catchStartPoints,passStartPoints = self.GetStartPointsForCatchPassSeq(catchpassSeq)       
+        testStartPoints = self.GetStartPointsForContinueSeq(testSeq)    
+        
+        result = []
+        result.append(catchStartPoints)
+        result.append(passStartPoints)
         result.append(testStartPoints)
         return result[:]
                 

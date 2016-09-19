@@ -31,7 +31,7 @@ except NameError:
     motionStartTime = [3650,19700,34000,49240,60800,92500,121200]
     motionEndTime = [17650,32000,47100,58000,89200,120400,149000]
     m_split_traindata = splitData.splitSpecialData(train_sensorData,train_normalizedSensorData,motionStartTime,motionEndTime)
-    m_startPoints_traindata = m_split_traindata.GetAllSeqStartPointsForSpecialData()
+    m_startPoints_traindata = m_split_traindata.GetAllSeqStartPointsFor_216_shipeng_lanqiu2()
     m_normalized_traindata = m_split_traindata.GetAllNormalizedData()
     m_unnormalized_traindata = m_split_traindata.GetAllUnnormalizedData()
     
@@ -55,7 +55,7 @@ else:
 # get feature of train and test  
 try:
     import utils
-    featureOf_Train = utils.readListfromCSV(7,'featureOf_Train_Datadiv2048_featureUnnor')
+    featureOf_Train = utils.readListfromCSV(7,'1featureOf_Train_Datadiv2048_featureUnnor')
     featureOf_TestinTrain = utils.readDataFramefromCSV('featureOf_TestinTrain_Datadiv2048_featureUnnor')
     featureOf_Noise = utils.readDataFramefromCSV('featureOf_Noise_Datadiv2048_featureUnnor')
     featureOf_TestinReal= utils.readDataFramefromCSV('featureOf_TestinReal_Datadiv2048_featureUnnor')
@@ -70,7 +70,7 @@ except IOError:
     m_noisedata = m_normalized_noisedata
     m_testdata = m_normalized_testdata
     print "extract feature from train data"
-    featureOf_Train = m_featureExtractor.ExtractFeatureForSpecialDatainShipengStyle(
+    featureOf_Train = m_featureExtractor.ExtractFeatureinShipengStyle(
                                         m_traindata,
                                         m_startPoints_traindata,True)
     print "extract feature from test data in train"

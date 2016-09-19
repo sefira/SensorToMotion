@@ -134,38 +134,6 @@ class featureExtractor:
         UnnormalizedData[self.sensor_name[3]] = UnnormalizedData[self.sensor_name[3]] / 1879.44
         UnnormalizedData[self.sensor_name[4]] = UnnormalizedData[self.sensor_name[4]] / 1879.44
         UnnormalizedData[self.sensor_name[5]] = UnnormalizedData[self.sensor_name[5]] / 1879.44
-        
-        featureOfSensor = pd.DataFrame()        
-        windowWidth = 100
-        if needBanlance:
-            # if need banlance the data, num limitation set to 50,
-            # so that (number of shoot samples etc.) = (number of run samples etc.) 
-            numLimit = 50
-        else:
-            numLimit = 999999
-        numCount = 0
-        for startPos in m_startPoints:
-            if numCount < numLimit:
-                numCount = numCount + 1
-                tempFeature = self.ExtractTraditonFeature(
-                    UnnormalizedData.loc[startPos:startPos+windowWidth-1])
-                featureOfSensor = featureOfSensor.append(tempFeature)
-        featureOfSensor.reset_index(drop=True,inplace=True)
-        return featureOfSensor
-        
-    def ExtractFeatureForSpecialDatainShipengStyle(self,m_unnormalizedData,m_startPoints,needBanlance = True):
-        print "********** extract feature **********"
-        UnnormalizedData = m_unnormalizedData.copy()
-        UnnormalizedData[self.sensor_name[0]] = UnnormalizedData[self.sensor_name[0]] / 2048
-        UnnormalizedData[self.sensor_name[1]] = UnnormalizedData[self.sensor_name[1]] / 2048
-        UnnormalizedData[self.sensor_name[2]] = UnnormalizedData[self.sensor_name[2]] / 2048
-        UnnormalizedData[self.sensor_name[3]] = UnnormalizedData[self.sensor_name[3]] / 1879.44
-        UnnormalizedData[self.sensor_name[4]] = UnnormalizedData[self.sensor_name[4]] / 1879.44
-        UnnormalizedData[self.sensor_name[5]] = UnnormalizedData[self.sensor_name[5]] / 1879.44
-        
-        featureOfSensor = []
-        for i in range(len(m_startPoints)-1):
-            featureOfSensor.append(pd.DataFrame())
             
         windowWidth = 100
         if needBanlance:
@@ -174,20 +142,34 @@ class featureExtractor:
             numLimit = 50
         else:
             numLimit = 999999
-        for classIndex in range(len(m_startPoints)-1):
+        if type(m_startPoints[0]) is list:
+            featureOfSensor = []
+            for i in range(len(m_startPoints)-1):
+                featureOfSensor.append(pd.DataFrame())
+            for classIndex in range(len(m_startPoints)-1):
+                numCount = 0
+                for startPos in m_startPoints[classIndex]:
+                    if numCount < numLimit:
+                        numCount = numCount + 1
+                        tempFeature = self.ExtractTraditonFeature(
+                            UnnormalizedData.loc[startPos:startPos+windowWidth-1])
+                        featureOfSensor[classIndex] = featureOfSensor[classIndex].append(tempFeature)
+                    else:
+                        break
+                featureOfSensor[classIndex].reset_index(drop=True,inplace=True)
+#               import matplotlib.pyplot as plt
+#               plt.figure()
+#               plt.plot(featureOfSensor[classIndex][0])
+        else:
+            featureOfSensor = pd.DataFrame()    
             numCount = 0
-            for startPos in m_startPoints[classIndex]:
+            for startPos in m_startPoints:
                 if numCount < numLimit:
                     numCount = numCount + 1
                     tempFeature = self.ExtractTraditonFeature(
                         UnnormalizedData.loc[startPos:startPos+windowWidth-1])
-                    featureOfSensor[classIndex] = featureOfSensor[classIndex].append(tempFeature)
-                else:
-                    break
-            featureOfSensor[classIndex].reset_index(drop=True,inplace=True)
-#            import matplotlib.pyplot as plt
-#            plt.figure()
-#            plt.plot(featureOfSensor[classIndex][0])
+                    featureOfSensor = featureOfSensor.append(tempFeature)
+            featureOfSensor.reset_index(drop=True,inplace=True)
         return featureOfSensor
 
 # end of class featureExtractor define
@@ -197,55 +179,43 @@ class AdvancedFeatureExtractor(featureExtractor):
         self.sensor_name = readData.sensor_name
         print "****** AdvancedFeatureExtractor init ********"
 
-    def ExtractFeatureForSpecialDatainShipengStyle(self,m_normalizedData,m_startPoints,needBanlance = True):
+    def ExtractFeatureinShipengStyle(self,m_normalizedData,m_startPoints,needBanlance = True):
         print "********** extract advance feature **********"
-        m_data = m_normalizedData.copy()        
-        featureOfSensor = []
-        for i in range(len(m_startPoints)-1):
-            featureOfSensor.append(pd.DataFrame())
-            
-        windowWidth = 100
+        m_data = m_normalizedData.copy()  
+        windowWidth = 100      
         if needBanlance:
             # if need banlance the data, num limitation set to 50,
             # so that (number of shoot samples etc.) = (number of run samples etc.) 
             numLimit = 50
         else:
             numLimit = 999999
-        for classIndex in range(len(m_startPoints)-1):
+        if type(m_startPoints[0]) is list:
+            featureOfSensor = []
+            for i in range(len(m_startPoints)-1):
+                featureOfSensor.append(pd.DataFrame())
+            for classIndex in range(len(m_startPoints)-1):
+                numCount = 0
+                for startPos in m_startPoints[classIndex]:
+                    if numCount < numLimit:
+                        numCount = numCount + 1
+                        tempFeature = self.ExtractTraditonFeature(
+                            m_data.loc[startPos:startPos+windowWidth-1])
+                        featureOfSensor[classIndex] = featureOfSensor[classIndex].append(tempFeature)
+                    else:
+                        break
+                featureOfSensor[classIndex].reset_index(drop=True,inplace=True)
+        else:
+            featureOfSensor = pd.DataFrame()
             numCount = 0
-            for startPos in m_startPoints[classIndex]:
+            for startPos in m_startPoints:
                 if numCount < numLimit:
                     numCount = numCount + 1
                     tempFeature = self.ExtractTraditonFeature(
                         m_data.loc[startPos:startPos+windowWidth-1])
-                    featureOfSensor[classIndex] = featureOfSensor[classIndex].append(tempFeature)
+                    featureOfSensor = featureOfSensor.append(tempFeature)
                 else:
                     break
-            featureOfSensor[classIndex].reset_index(drop=True,inplace=True)
+            featureOfSensor.reset_index(drop=True,inplace=True)
         return featureOfSensor
-        
-    def ExtractFeatureinShipengStyle(self,m_normalizedData,m_startPoints,needBanlance = True):
-        print "********** extract advance feature **********"
-        m_data = m_normalizedData.copy()
-        
-        featureOfSensor = pd.DataFrame()
-        windowWidth = 100
-        if needBanlance:
-            # if need banlance the data, num limitation set to 50,
-            # so that (number of shoot samples etc.) = (number of run samples etc.) 
-            numLimit = 50
-        else:
-            numLimit = 999999
-        numCount = 0
-        for startPos in m_startPoints:
-            if numCount < numLimit:
-                numCount = numCount + 1
-                tempFeature = self.ExtractTraditonFeature(
-                    m_data.loc[startPos:startPos+windowWidth-1])
-                featureOfSensor = featureOfSensor.append(tempFeature)
-            else:
-                break
-        featureOfSensor.reset_index(drop=True,inplace=True)
-        return featureOfSensor  
         
 # end of class AdvancedFeatureExtractor define
