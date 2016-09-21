@@ -114,3 +114,16 @@ def CrossValidateClassifiers(times,num_fold,train_data,train_label):
         CrossValidationScore[classifiers_name_it] = \
             CrossValidationScore[classifiers_name_it] /times
     return CrossValidationScore
+    
+# get the mode of different classifiers, present a vote function
+def ModethePredict(test_data,predictRes):
+    from scipy.stats import mode
+    predictMode = []
+    for i in range(len(test_data)):
+        predictMode.append(
+            mode([predictRes['LR'][i],
+                  predictRes['KNN'][i],#predictRes['KNN'][i],predictRes['KNN'][i],
+                predictRes['RF'][i]
+                #predictRes['GBDT'][i]#,predictRes['GBDT'][i]
+                ])[0][0])
+    return predictMode

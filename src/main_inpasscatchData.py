@@ -5,8 +5,8 @@ from classification import m_classifiers_name
 from classification import CrossValidateClassifiers
 from classification import TraininAllClassifiers
 from classification import PrediectinAllClassifiers
+from classification import ModethePredict
 from visualizePredictResult import PlotTestSeqandPredictRes
-
 from sklearn import cross_validation
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -155,12 +155,15 @@ for i in range(len(featureOf_Train)):
 ###########################################
 ############# normalize data ##############
 ###########################################
+print "normalize data:"
 #plt.figure()
 #plt.plot(train_data[0])
-#m_featureExtractor = extractFeature.AdvancedFeatureExtractor()
-#train_data = m_featureExtractor.normalizeData(train_data)
-#featureOf_TestinTrain = m_featureExtractor.normalizeData(featureOf_TestinTrain)
-#featureOf_TestinReal = m_featureExtractor.normalizeData(featureOf_TestinReal)
+m_featureExtractor = extractFeature.featureExtractor()
+m_normalizer = m_featureExtractor.normalizeDataMinMax
+train_data = m_normalizer(train_data)
+featureOf_TestinTrain = m_normalizer(featureOf_TestinTrain)
+featureOf_TestinReal = m_normalizer(featureOf_TestinReal)
+featureOf_TestinCatchPass = m_normalizer(featureOf_TestinCatchPass)
 #plt.figure()
 #plt.plot(train_data[0])
 
@@ -177,19 +180,6 @@ TraininAllClassifiers(train_data,train_label,test_data,test_label)
 ###########################################
 ###### preditct and show the result #######
 ###########################################
-# get the mode of different classifiers, present a vote function
-def ModethePredict(test_data,predictRes):
-    from scipy.stats import mode
-    predictMode = []
-    for i in range(len(test_data)):
-        predictMode.append(
-            mode([predictRes['LR'][i],
-                  predictRes['KNN'][i],#predictRes['KNN'][i],predictRes['KNN'][i],
-                predictRes['RF'][i],
-                predictRes['GBDT'][i]#,predictRes['GBDT'][i]
-                ])[0][0])
-    return predictMode
-
 test_naivedata = featureOf_TestinTrain
 try:
     notexist
@@ -227,4 +217,5 @@ else:
     print "Predict has been extracted!"
 m_predictMode = ModethePredict(test_catchpassdata,predictResinCatchPass)
 PlotTestSeqandPredictRes(m_normalized_catchpassdata.loc[45000:94000]['accelerometerX'],
+#PlotTestSeqandPredictRes(m_normalized_catchpassdata.loc[3000:43000]['accelerometerX'],
                          m_predictMode,'MODE')

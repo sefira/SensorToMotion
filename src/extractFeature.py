@@ -114,7 +114,7 @@ class featureExtractor:
         m_featrue = m_featrue.T
         return m_featrue
         
-    def normalizeData(self,ori_data):
+    def normalizeDataMeanStd1free(self,ori_data):
         print "********** normalize data ***********"
         if type(ori_data) is list:
             data = ori_data[:]
@@ -123,6 +123,31 @@ class featureExtractor:
         else:
             data = ori_data.copy()
             data = (ori_data - ori_data.mean()) / ori_data.std()
+        return data
+        
+    def normalizeDataMeanStd0free(self,ori_data):
+        print "********** normalize data ***********"
+        from sklearn import preprocessing
+        if type(ori_data) is list:
+            data = ori_data[:]
+            for i in range(len(ori_data)):
+                data[i] = pd.DataFrame(preprocessing.scale(data[i]),data[i].index,data[i].columns)
+        else:
+            data = ori_data.copy()
+            data = pd.DataFrame(preprocessing.scale(data),data.index,data.columns)
+        return data
+        
+    def normalizeDataMinMax(self,ori_data):
+        print "********** normalize data ***********"
+        from sklearn import preprocessing
+        min_max_scaler = preprocessing.MinMaxScaler()
+        if type(ori_data) is list:
+            data = ori_data[:]
+            for i in range(len(ori_data)):
+                data[i] = pd.DataFrame(min_max_scaler.fit_transform(data[i]),index=data[i].index,columns=data[i].columns)
+        else:
+            data = ori_data.copy()
+            data = pd.DataFrame(min_max_scaler.fit_transform(data),index=data.index,columns=data.columns)
         return data
         
     def ExtractFeatureinShipengStyle(self,m_unnormalizedData,m_startPoints,needBanlance = True):
