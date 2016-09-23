@@ -158,8 +158,7 @@ for i in range(len(featureOf_Train)):
 print "normalize data:"
 #plt.figure()
 #plt.plot(train_data[0])
-m_featureExtractor = extractFeature.featureExtractor()
-m_normalizer = m_featureExtractor.normalizeDataMinMax
+m_normalizer = extractFeature.Normalizer("minmax",train_data).normalizer
 train_data = m_normalizer(train_data)
 featureOf_TestinTrain = m_normalizer(featureOf_TestinTrain)
 featureOf_TestinReal = m_normalizer(featureOf_TestinReal)
@@ -167,10 +166,10 @@ featureOf_TestinCatchPass = m_normalizer(featureOf_TestinCatchPass)
 #plt.figure()
 #plt.plot(train_data[0])
 
-print "cross validation:"
-m_cross_validation_score = CrossValidateClassifiers(times=20,num_fold=2,train_data=train_data,train_label=train_label)
-for m_classifiers_name_it in m_classifiers_name:
-    print "%s score : %f" % (m_classifiers_name_it, m_cross_validation_score[m_classifiers_name_it])
+#print "cross validation:"
+#m_cross_validation_score = CrossValidateClassifiers(times=20,num_fold=2,train_data=train_data,train_label=train_label)
+#for m_classifiers_name_it in m_classifiers_name:
+#    print "%s score : %f" % (m_classifiers_name_it, m_cross_validation_score[m_classifiers_name_it])
 
 train_data,test_data,train_label,test_label = cross_validation.train_test_split(
                             train_data, train_label, test_size=0.1)
@@ -192,7 +191,7 @@ else:
 m_predictMode = ModethePredict(test_naivedata,predictRes)
 PlotTestSeqandPredictRes(m_normalized_traindata.loc[121200:149000]['accelerometerX'],
                          m_predictMode,'MODE')
-
+a = m_predictMode
 test_realdata = featureOf_TestinReal
 try:
     notexist
@@ -205,7 +204,7 @@ else:
 m_predictMode = ModethePredict(test_realdata,predictResinReal)
 PlotTestSeqandPredictRes(m_normalized_testdata['accelerometerX'],
                          m_predictMode,'MODE')
-                         
+b = m_predictMode
 test_catchpassdata = featureOf_TestinCatchPass
 try:
     notexist
@@ -219,3 +218,4 @@ m_predictMode = ModethePredict(test_catchpassdata,predictResinCatchPass)
 PlotTestSeqandPredictRes(m_normalized_catchpassdata.loc[45000:94000]['accelerometerX'],
 #PlotTestSeqandPredictRes(m_normalized_catchpassdata.loc[3000:43000]['accelerometerX'],
                          m_predictMode,'MODE')
+c = m_predictMode

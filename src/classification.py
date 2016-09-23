@@ -85,7 +85,8 @@ def PrediectinAllClassifiers(test_data):
     num_feat = test_data.shape[1]
     print '******************** Data Info *********************'  
     print '#testing_data: %d, dimension: %d' % (num_test, num_feat)  
-    predictRes = {'KNN':[],  
+    predictRes = {
+              'KNN':[],  
                'LR':[],  
                'RF':[],  
                'DT':[],  
@@ -121,8 +122,8 @@ def ModethePredict(test_data,predictRes):
     predictMode = []
     for i in range(len(test_data)):
         predictMode.append(
-            mode([predictRes['LR'][i],
-                  predictRes['KNN'][i],#predictRes['KNN'][i],predictRes['KNN'][i],
+            mode([predictRes['LR'][i],predictRes['LR'][i],
+                  #predictRes['KNN'][i],#predictRes['KNN'][i],predictRes['KNN'][i],
                 predictRes['RF'][i]
                 #predictRes['GBDT'][i]#,predictRes['GBDT'][i]
                 ])[0][0])

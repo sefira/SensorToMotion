@@ -6,7 +6,74 @@ augmentationName.append('gxyz')
 
 import numpy as np
 import pandas as pd
+from sklearn import preprocessing
+
+class Normalizer:
+    def __init__(self, normalizer_type,data):
+        print "********** init normalizer **********"
+        normalizer_map = {
+                "meanstd1free":self.normalizeDataMeanStd1free,
+                "meanstd0free":self.normalizeDataMeanStd0free,
+                "minmax":self.normalizeDataMinMax,
+                "robust":self.normalizeDataRobust
+        }
+        self.normalizer = normalizer_map[normalizer_type]
+        self.standrad_scaler = preprocessing.StandardScaler().fit(data)
+        self.minmax_scaler = preprocessing.MinMaxScaler().fit(data)
+        self.robust_scaler = preprocessing.RobustScaler().fit(data)
+        
+    def normalizeDataMeanStd1free(self,ori_data):
+        print "********** MeanStd1free normalize data ***********"
+        if type(ori_data) is list:
+            data = ori_data[:]
+            for i in range(len(ori_data)):
+                data[i] = (ori_data[i] - ori_data[i].mean())/ori_data[i].std()
+        else:
+            data = ori_data.copy()
+            data = (ori_data - ori_data.mean()) / ori_data.std()
+        return data
+        
+    def normalizeDataMeanStd0free(self,ori_data):
+        print "********** MeanStd0free normalize data ***********"
+        if type(ori_data) is list:
+            data = ori_data[:]
+            for i in range(len(ori_data)):
+                data[i] = pd.DataFrame(self.standrad_scaler.transform(data[i]),
+                                    index=data[i].index,columns=data[i].columns)
+        else:
+            data = ori_data.copy()
+            data = pd.DataFrame(self.standrad_scaler.transform(data),
+                                 index=data.index,columns=data.columns)
+        return data
+        
+    def normalizeDataMinMax(self,ori_data):
+        print "********** Minmax normalize data ***********"
+        if type(ori_data) is list:
+            data = ori_data[:]
+            for i in range(len(ori_data)):
+                data[i] = pd.DataFrame(self.minmax_scaler.transform(data[i]),
+                                index=data[i].index,columns=data[i].columns)
+        else:
+            data = ori_data.copy()
+            data = pd.DataFrame(self.minmax_scaler.transform(data),
+                                index=data.index,columns=data.columns)
+        return data
     
+    def normalizeDataRobust(self,ori_data):
+        print "********** Robust normalize data ***********"
+        if type(ori_data) is list:
+            data = ori_data[:]
+            for i in range(len(ori_data)):
+                data[i] = pd.DataFrame(self.robust_scaler.transform(data[i]),
+                                index=data[i].index,columns=data[i].columns)
+        else:
+            data = ori_data.copy()
+            data = pd.DataFrame(self.robust_scaler.transform(data),
+                                index=data.index,columns=data.columns)
+        return data
+        
+# end of class normalizer define
+        
 copydata = 0
 flag = 1
 class featureExtractor:
@@ -113,42 +180,6 @@ class featureExtractor:
         m_featrue.reset_index(drop=True,inplace=True)
         m_featrue = m_featrue.T
         return m_featrue
-        
-    def normalizeDataMeanStd1free(self,ori_data):
-        print "********** normalize data ***********"
-        if type(ori_data) is list:
-            data = ori_data[:]
-            for i in range(len(ori_data)):
-                data[i] = (ori_data[i] - ori_data[i].mean())/ori_data[i].std()
-        else:
-            data = ori_data.copy()
-            data = (ori_data - ori_data.mean()) / ori_data.std()
-        return data
-        
-    def normalizeDataMeanStd0free(self,ori_data):
-        print "********** normalize data ***********"
-        from sklearn import preprocessing
-        if type(ori_data) is list:
-            data = ori_data[:]
-            for i in range(len(ori_data)):
-                data[i] = pd.DataFrame(preprocessing.scale(data[i]),data[i].index,data[i].columns)
-        else:
-            data = ori_data.copy()
-            data = pd.DataFrame(preprocessing.scale(data),data.index,data.columns)
-        return data
-        
-    def normalizeDataMinMax(self,ori_data):
-        print "********** normalize data ***********"
-        from sklearn import preprocessing
-        min_max_scaler = preprocessing.MinMaxScaler()
-        if type(ori_data) is list:
-            data = ori_data[:]
-            for i in range(len(ori_data)):
-                data[i] = pd.DataFrame(min_max_scaler.fit_transform(data[i]),index=data[i].index,columns=data[i].columns)
-        else:
-            data = ori_data.copy()
-            data = pd.DataFrame(min_max_scaler.fit_transform(data),index=data.index,columns=data.columns)
-        return data
         
     def ExtractFeatureinShipengStyle(self,m_unnormalizedData,m_startPoints,needBanlance = True):
         print "********** extract feature **********"        
