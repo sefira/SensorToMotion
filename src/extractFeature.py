@@ -7,13 +7,12 @@ augmentationName.append('gxyz')
 import numpy as np
 import pandas as pd
 from sklearn import preprocessing
-
 class Normalizer:
     def __init__(self, normalizer_type,data):
         print "********** init normalizer **********"
         normalizer_map = {
-                "meanstd1free":self.normalizeDataMeanStd1free,
-                "meanstd0free":self.normalizeDataMeanStd0free,
+                "zscore1free":self.normalizeDataMeanStd1free,
+                "zscore0free":self.normalizeDataMeanStd0free,
                 "minmax":self.normalizeDataMinMax,
                 "robust":self.normalizeDataRobust
         }

@@ -1,3 +1,5 @@
+# run it after run maininPssCatchData and laster main
+
 import matplotlib.pyplot as plt
 import numpy as np
 
