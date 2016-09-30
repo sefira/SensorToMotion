@@ -1,0 +1,108 @@
+#########################################
+#### times = 20 num_fold = 2 
+#### using unnormalized data
+#### using shipeng feature
+#### without reduce dimension
+#########################################
+KNN score : 0.945714
+LR score : 0.965714
+RF score : 0.964857
+DT score : 0.772286
+GBDT score : 0.842286
+
+KNN score : 0.945714
+LR score : 0.965714
+RF score : 0.962286
+DT score : 0.761571
+GBDT score : 0.841143
+
+KNN score : 0.945714
+LR score : 0.965714
+RF score : 0.960714
+DT score : 0.762143
+GBDT score : 0.841000
+
+KNN score : 0.945714
+LR score : 0.965714
+RF score : 0.957571
+DT score : 0.776286
+GBDT score : 0.840857
+
+KNN score : 0.945714
+LR score : 0.965714
+RF score : 0.961000
+DT score : 0.770714
+GBDT score : 0.840286
+
+#########################################
+#### times = 20 num_fold = 2 
+#### using unnormalized data
+#### using unnormalized feature
+#### without reduce dimension
+#########################################
+KNN score : 0.945714
+LR score : 0.860000
+RF score : 0.943000
+DT score : 0.770000
+GBDT score : 0.840143
+
+KNN score : 0.945714
+LR score : 0.860000
+RF score : 0.960143
+DT score : 0.760000
+GBDT score : 0.841714
+
+#########################################
+#### times = 20 num_fold = 2 
+#### using normalized data by div 2048
+#### using unnormalized feature
+#### without reduce dimension
+#########################################
+KNN score : 0.942857
+LR score : 0.965714
+RF score : 0.960429
+DT score : 0.770429
+GBDT score : 0.840857
+
+KNN score : 0.942857
+LR score : 0.965714
+RF score : 0.952714
+DT score : 0.782714
+GBDT score : 0.841000
+
+KNN score : 0.942857
+LR score : 0.965714
+RF score : 0.963571
+DT score : 0.767143
+GBDT score : 0.840714
+
+KNN score : 0.942857
+LR score : 0.965714
+RF score : 0.961429
+DT score : 0.762571
+GBDT score : 0.840857
+
+KNN score : 0.942857
+LR score : 0.965714
+RF score : 0.959429
+DT score : 0.780571
+GBDT score : 0.840429
+
+#########################################
+#### times = 20 num_fold = 2 
+#### using normalized data by div 2048
+#### using zero-score normalized feature
+#### without reduce dimension
+#########################################
+KNN score : 0.965714
+LR score : 0.940000
+RF score : 0.949286
+DT score : 0.767571
+GBDT score : 0.841143
+
+KNN score : 0.965714
+LR score : 0.940000
+RF score : 0.945429
+DT score : 0.766000
+GBDT score : 0.840286
+

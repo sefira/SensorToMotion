@@ -7,6 +7,7 @@ augmentationName.append('gxyz')
 import numpy as np
 import pandas as pd
 from sklearn import preprocessing
+from sklearn.decomposition import PCA as skPCA
 class Normalizer:
     def __init__(self, normalizer_type,data):
         print "********** init normalizer **********"
@@ -73,6 +74,61 @@ class Normalizer:
         
 # end of class normalizer define
         
+class PCAor:
+    def __init__(self,pca_type,data,n_components):
+        print "******** init PCAer **********"
+        pca_map = {
+            "already":self.pcawithalreadydata,
+            "normal":self.normalPCA,
+        }
+        self.components_index = []
+        self.eig_vecs = []
+        self.pcaor = pca_map[pca_type]
+        
+        # normal pca init and fit
+        self.normal_pca = skPCA(n_components=n_components)
+        self.normal_pca.fit(data)
+        # already manually standarize data then pca init and fit
+        self._pcawithalreadydatatofit(data,n_components)
+    
+    # to fit the data then get the principle components
+    def _pcawithalreadydatatofit(self,ori_data,n_components):
+        print "********** Fit Already data ***********"
+        cov_mat = ori_data.T.dot(ori_data)/(ori_data.shape[0]-1)
+        eig_vals, eig_vecs = np.linalg.eig(cov_mat)
+        tot = eig_vals.sum(axis = 0)
+        var_exp = pd.DataFrame(eig_vals/tot)
+        var_exp = var_exp.sort_values(by=0, ascending=False)
+        cum_var_exp = pd.DataFrame(var_exp.reset_index(drop=True).cumsum())
+#        import matplotlib.pyplot as plt
+#        plt.figure()
+#        plt.bar(cum_var_exp.index,var_exp[0],width = 0.35)
+#        plt.step(cum_var_exp.index,cum_var_exp,where='mid')
+        self.components_index = var_exp.index[0:n_components]
+        self.eig_vecs = eig_vecs[self.components_index]
+    
+    def pcawithalreadydata(self,ori_data):
+        print "********** Transform Already data ***********"
+        if type(ori_data) is list:
+            data = ori_data[:]
+            for i in range(len(ori_data)):
+                data[i] = ori_data[i].dot(self.eig_vecs.T)
+        else:
+            data = ori_data.dot(self.eig_vecs.T)
+        return data
+    
+    def normalPCA(self,ori_data):
+        print "********** Normal PCA Transform ***********"  
+        if type(ori_data) is list:
+            data = ori_data[:]
+            for i in range(len(ori_data)):
+                data[i] = self.normal_pca.transform(ori_data[i])
+        else:
+            data = self.normal_pca.transform(ori_data)
+        return data
+        
+# end of class PCAor define
+       
 copydata = 0
 flag = 1
 class featureExtractor:

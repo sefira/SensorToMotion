@@ -76,12 +76,7 @@ try:
     featureOf_TestinReal = utils.readDataFramefromCSV('featureOf_TestinReal_Datadiv2048_featureUnnor')
     featureOf_CatchPass = utils.readListfromCSV(2,'featureOf_CatchPass_Datadiv2048_featureUnnor')
     featureOf_TestinCatchPass = utils.readDataFramefromCSV('featureOf_TestinCatchPass_Datadiv2048_featureUnnor')
-except IOError:
-#    m_featureExtractor = extractFeature.featureExtractor()
-#    m_traindata = m_unnormalized_traindata
-#    m_noisedata = m_unnormalized_noisedata
-#    m_testdata = m_unnormalized_testdata
-    
+except IOError:    
     m_featureExtractor = extractFeature.AdvancedFeatureExtractor()
     m_traindata = m_normalized_traindata
     m_noisedata = m_normalized_noisedata
@@ -116,13 +111,6 @@ except IOError:
     featureOf_Train.append(featureOf_Noise)
     featureOf_Train.append(featureOf_CatchPass[0])
     featureOf_Train.append(featureOf_CatchPass[1])
-    print "save feature in intermedia fold!"
-    utils.saveListtoCSV(featureOf_Train,'featureOf_Train_Datadiv2048_featureUnnor')
-    utils.saveDataFrametoCSV(featureOf_TestinTrain,'featureOf_TestinTrain_Datadiv2048_featureUnnor')
-    utils.saveDataFrametoCSV(featureOf_Noise,'featureOf_Noise_Datadiv2048_featureUnnor')
-    utils.saveDataFrametoCSV(featureOf_TestinReal,'featureOf_TestinReal_Datadiv2048_featureUnnor')
-    utils.saveListtoCSV(featureOf_CatchPass,'featureOf_CatchPass_Datadiv2048_featureUnnor')
-    utils.saveDataFrametoCSV(featureOf_TestinCatchPass,'featureOf_TestinCatchPass_Datadiv2048_featureUnnor')
 else:
     print "Feature has been loaded!"
     
@@ -156,20 +144,23 @@ for i in range(len(featureOf_Train)):
 ############# normalize data ##############
 ###########################################
 print "normalize data:"
-#plt.figure()
-#plt.plot(train_data[0])
-m_normalizer = extractFeature.Normalizer("robust",train_data).normalizer
-train_data = m_normalizer(train_data)
-featureOf_TestinTrain = m_normalizer(featureOf_TestinTrain)
-featureOf_TestinReal = m_normalizer(featureOf_TestinReal)
-featureOf_TestinCatchPass = m_normalizer(featureOf_TestinCatchPass)
-#plt.figure()
-#plt.plot(train_data[0])
+m_normalizer = extractFeature.Normalizer("robust",train_data)
+train_data = m_normalizer.normalizer(train_data)
+featureOf_TestinTrain = m_normalizer.normalizer(featureOf_TestinTrain)
+featureOf_TestinReal = m_normalizer.normalizer(featureOf_TestinReal)
+featureOf_TestinCatchPass = m_normalizer.normalizer(featureOf_TestinCatchPass)
 
-#print "cross validation:"
-#m_cross_validation_score = CrossValidateClassifiers(times=20,num_fold=2,train_data=train_data,train_label=train_label)
-#for m_classifiers_name_it in m_classifiers_name:
-#    print "%s score : %f" % (m_classifiers_name_it, m_cross_validation_score[m_classifiers_name_it])
+print "PCA data:"
+m_pcaor = extractFeature.PCAor("normal",train_data,25)
+train_data = m_pcaor.pcaor(train_data)
+featureOf_TestinTrain = m_pcaor.pcaor(featureOf_TestinTrain)
+featureOf_TestinReal = m_pcaor.pcaor(featureOf_TestinReal)
+featureOf_TestinCatchPass = m_pcaor.pcaor(featureOf_TestinCatchPass)
+
+print "cross validation:"
+m_cross_validation_score = CrossValidateClassifiers(times=20,num_fold=2,train_data=train_data,train_label=train_label)
+for m_classifiers_name_it in m_classifiers_name:
+    print "%s score : %f" % (m_classifiers_name_it, m_cross_validation_score[m_classifiers_name_it])
 
 train_data,test_data,train_label,test_label = cross_validation.train_test_split(
                             train_data, train_label, test_size=0.1)
@@ -191,7 +182,7 @@ else:
 m_predictMode = ModethePredict(test_naivedata,predictRes)
 PlotTestSeqandPredictRes(m_normalized_traindata.loc[121200:149000]['accelerometerX'],
                          m_predictMode,'MODE')
-aa = m_predictMode
+                         
 test_realdata = featureOf_TestinReal
 try:
     notexist
@@ -204,7 +195,7 @@ else:
 m_predictMode = ModethePredict(test_realdata,predictResinReal)
 PlotTestSeqandPredictRes(m_normalized_testdata['accelerometerX'],
                          m_predictMode,'MODE')
-bb = m_predictMode
+
 test_catchpassdata = featureOf_TestinCatchPass
 try:
     notexist
@@ -218,4 +209,5 @@ m_predictMode = ModethePredict(test_catchpassdata,predictResinCatchPass)
 PlotTestSeqandPredictRes(m_normalized_catchpassdata.loc[45000:94000]['accelerometerX'],
 #PlotTestSeqandPredictRes(m_normalized_catchpassdata.loc[3000:43000]['accelerometerX'],
                          m_predictMode,'MODE')
-cc = m_predictMode
+                     
+                         

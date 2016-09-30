@@ -1,0 +1,49 @@
+#########################################
+#### 9 class
+#### times = 20 num_fold = 2 
+#### using normalized data by div 2048
+#### using robust feature
+#### normal PCA
+#########################################
+KNN score : 0.948889
+LR score : 0.933333
+RF score : 0.893000
+DT score : 0.881444
+GBDT score : 0.897778
+
+KNN score : 0.948889
+LR score : 0.933333
+RF score : 0.893889
+DT score : 0.868444
+GBDT score : 0.897222
+
+KNN score : 0.948889
+LR score : 0.933333
+RF score : 0.901778
+DT score : 0.872222
+GBDT score : 0.897889
+
+#########################################
+#### 9 class
+#### times = 20 num_fold = 2 
+#### using normalized data by div 2048
+#### using robust feature
+#### robust PCA
+#########################################
+KNN score : 0.857778
+LR score : 0.908889
+RF score : 0.830889
+DT score : 0.686333
+GBDT score : 0.756667
+
+KNN score : 0.857778
+LR score : 0.908889
+RF score : 0.829444
+DT score : 0.689000
+GBDT score : 0.759111
+
+KNN score : 0.857778
+LR score : 0.908889
+RF score : 0.832778
+DT score : 0.670333
+GBDT score : 0.757222
