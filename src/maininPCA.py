@@ -51,8 +51,8 @@ except NameError:
     m_normalized_testdata = m_split_testdata.GetAllNormalizedData()
     m_unnormalized_testdata = m_split_testdata.GetAllUnnormalizedData()
     
-    motionStartTime = [3000,45000];
-    motionEndTime = [43000,94000];
+    motionStartTime = [3000,45000]
+    motionEndTime = [43000,94000]
     m_split_catchpassdata = splitData.splitSpecialData(catchpass_sensorData,catchpass_normalizedSensorData,
                                                        motionStartTime,motionEndTime)
     m_startPoints_catchpassdata = m_split_catchpassdata.GetAllSeqStartPointsFor_253_0909_passcatch()

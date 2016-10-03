@@ -6,8 +6,6 @@ augmentationName.append('gxyz')
 
 import numpy as np
 import pandas as pd
-from sklearn import preprocessing
-from sklearn.decomposition import PCA as skPCA
 class Normalizer:
     def __init__(self, normalizer_type,data):
         print "********** init normalizer **********"
@@ -17,6 +15,7 @@ class Normalizer:
                 "minmax":self.normalizeDataMinMax,
                 "robust":self.normalizeDataRobust
         }
+        from sklearn import preprocessing
         self.normalizer = normalizer_map[normalizer_type]
         self.standrad_scaler = preprocessing.StandardScaler().fit(data)
         self.minmax_scaler = preprocessing.MinMaxScaler().fit(data)
@@ -80,16 +79,22 @@ class PCAor:
         pca_map = {
             "already":self.pcawithalreadydata,
             "normal":self.normalPCA,
+            "kernal":self.kernalPCA,
         }
         self.components_index = []
         self.eig_vecs = []
         self.pcaor = pca_map[pca_type]
         
         # normal pca init and fit
-        self.normal_pca = skPCA(n_components=n_components)
+        from sklearn.decomposition import PCA
+        self.normal_pca = PCA(n_components=n_components,whiten=False)
         self.normal_pca.fit(data)
         # already manually standarize data then pca init and fit
         self._pcawithalreadydatatofit(data,n_components)
+        # kernal pca init and fit        
+        from sklearn.decomposition import KernelPCA
+        self.kernal_pca = KernelPCA(kernel="cosine", gamma=10) #cosine for knn
+        self.kernal_pca.fit(data)
     
     # to fit the data then get the principle components
     def _pcawithalreadydatatofit(self,ori_data,n_components):
@@ -99,11 +104,6 @@ class PCAor:
         tot = eig_vals.sum(axis = 0)
         var_exp = pd.DataFrame(eig_vals/tot)
         var_exp = var_exp.sort_values(by=0, ascending=False)
-        cum_var_exp = pd.DataFrame(var_exp.reset_index(drop=True).cumsum())
-#        import matplotlib.pyplot as plt
-#        plt.figure()
-#        plt.bar(cum_var_exp.index,var_exp[0],width = 0.35)
-#        plt.step(cum_var_exp.index,cum_var_exp,where='mid')
         self.components_index = var_exp.index[0:n_components]
         self.eig_vecs = eig_vecs[self.components_index]
     
@@ -126,7 +126,16 @@ class PCAor:
         else:
             data = self.normal_pca.transform(ori_data)
         return data
-        
+    
+    def kernalPCA(self,ori_data):
+        print "********** Kernal PCA Transform ***********"
+        if type(ori_data) is list:
+            data = ori_data[:]
+            for i in range(len(ori_data)):
+                data[i] = self.kernal_pca.transform(ori_data[i])
+        else:
+            data = self.kernal_pca.transform(ori_data)
+        return data
 # end of class PCAor define
        
 copydata = 0

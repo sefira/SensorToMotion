@@ -3,7 +3,7 @@
 #### times = 20 num_fold = 2 
 #### using normalized data by div 2048
 #### using robust feature
-#### normal PCA
+#### 25 component normal PCA
 #########################################
 KNN score : 0.948889
 LR score : 0.933333
@@ -28,22 +28,85 @@ GBDT score : 0.897889
 #### times = 20 num_fold = 2 
 #### using normalized data by div 2048
 #### using robust feature
-#### robust PCA
+#### 25 component robust PCA 
 #########################################
-KNN score : 0.857778
+KNN score : 0.875556
 LR score : 0.908889
-RF score : 0.830889
-DT score : 0.686333
-GBDT score : 0.756667
+RF score : 0.853444
+DT score : 0.721444
+GBDT score : 0.810222
 
-KNN score : 0.857778
+KNN score : 0.875556
 LR score : 0.908889
-RF score : 0.829444
-DT score : 0.689000
-GBDT score : 0.759111
+RF score : 0.853444
+DT score : 0.722889
+GBDT score : 0.809222
 
-KNN score : 0.857778
-LR score : 0.908889
-RF score : 0.832778
-DT score : 0.670333
-GBDT score : 0.757222
+#########################################
+#### 9 class
+#### times = 20 num_fold = 2 
+#### using normalized data by div 2048
+#### using robust feature
+#### 25 component normal PCA with whiten
+#########################################
+KNN score : 0.715556
+LR score : 0.831111
+RF score : 0.899778
+DT score : 0.871667
+GBDT score : 0.897000
+
+KNN score : 0.715556
+LR score : 0.831111
+RF score : 0.903889
+DT score : 0.877778
+GBDT score : 0.898000
+
+KNN score : 0.715556
+LR score : 0.831111
+RF score : 0.892667
+DT score : 0.873889
+GBDT score : 0.897556
+
+#########################################
+#### 9 class
+#### times = 20 num_fold = 2 
+#### using normalized data by div 2048
+#### using robust feature
+#### 25 component kernal linear PCA
+#########################################
+KNN score : 0.924444
+LR score : 0.944444
+RF score : 0.873556
+DT score : 0.872667
+GBDT score : 0.871000
+
+KNN score : 0.924444
+LR score : 0.944444
+RF score : 0.876889
+DT score : 0.872111
+GBDT score : 0.871556
+
+#########################################
+#### 9 class
+#### times = 20 num_fold = 2 
+#### using normalized data by div 2048
+#### using robust feature
+#### 25 component kernal linear PCA
+#########################################
+KNN score : 0.980000
+LR score : 0.922222
+RF score : 0.708111
+DT score : 0.864333
+GBDT score : 0.899444
+
+KNN score : 0.980000
+LR score : 0.922222
+RF score : 0.703111
+DT score : 0.855556
+GBDT score : 0.899444
+
+KNN score : 0.980000
+LR score : 0.922222
+RF score : 0.689778
+DT score : 0.878000
+GBDT score : 0.899444
