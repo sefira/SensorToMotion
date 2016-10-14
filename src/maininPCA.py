@@ -1,6 +1,7 @@
 import readData
 import splitData
 import extractFeature
+import processingFeature
 from classification import m_classifiers_name
 from classification import CrossValidateClassifiers
 from classification import TraininAllClassifiers
@@ -77,7 +78,7 @@ try:
     featureOf_CatchPass = utils.readListfromCSV(2,'featureOf_CatchPass_Datadiv2048_featureUnnor')
     featureOf_TestinCatchPass = utils.readDataFramefromCSV('featureOf_TestinCatchPass_Datadiv2048_featureUnnor')
 except IOError:    
-    m_featureExtractor = extractFeature.AdvancedFeatureExtractor()
+    m_featureExtractor = extractFeature.NormaDatafeatureExtractor()
     m_traindata = m_normalized_traindata
     m_noisedata = m_normalized_noisedata
     m_testdata = m_normalized_testdata
@@ -85,12 +86,11 @@ except IOError:
     print "extract feature from train data"
     featureOf_Train = m_featureExtractor.ExtractFeatureinShipengStyle(
                                         m_traindata,
-                                        m_startPoints_traindata,True)
+                                        m_startPoints_traindata[0:-1],True)
     print "extract feature from test data in train"
     featureOf_TestinTrain = m_featureExtractor.ExtractFeatureinShipengStyle(
                                         m_traindata,
-                                        m_startPoints_traindata[
-                                        len(m_startPoints_traindata)-1],False)
+                                        m_startPoints_traindata[-1],False)
     print "extract feature from noise data"
     featureOf_Noise = m_featureExtractor.ExtractFeatureinShipengStyle(
                                         m_noisedata,
@@ -102,12 +102,11 @@ except IOError:
     print "extract feature from catchpass data"
     featureOf_CatchPass = m_featureExtractor.ExtractFeatureinShipengStyle(
                                         m_catchpassdata,
-                                        m_startPoints_catchpassdata,True)
+                                        m_startPoints_catchpassdata[0:-1],True)
     print "extract feature from test data in catchpass"
     featureOf_TestinCatchPass = m_featureExtractor.ExtractFeatureinShipengStyle(
                                         m_catchpassdata,
-                                        m_startPoints_catchpassdata[
-                                        len(m_startPoints_catchpassdata)-1],False)
+                                        m_startPoints_catchpassdata[-1],False)
     featureOf_Train.append(featureOf_Noise)
     featureOf_Train.append(featureOf_CatchPass[0])
     featureOf_Train.append(featureOf_CatchPass[1])
@@ -144,14 +143,14 @@ for i in range(len(featureOf_Train)):
 ############# normalize data ##############
 ###########################################
 print "normalize data:"
-m_normalizer = extractFeature.Normalizer("robust",train_data)
+m_normalizer = processingFeature.Normalizer("robust",train_data)
 train_data = m_normalizer.normalizer(train_data)
 featureOf_TestinTrain = m_normalizer.normalizer(featureOf_TestinTrain)
 featureOf_TestinReal = m_normalizer.normalizer(featureOf_TestinReal)
 featureOf_TestinCatchPass = m_normalizer.normalizer(featureOf_TestinCatchPass)
 
 print "PCA data:"
-m_pcaor = extractFeature.PCAor("normal",train_data,25)
+m_pcaor = processingFeature.PCAor("normal",train_data,25)
 train_data = m_pcaor.pcaor(train_data)
 featureOf_TestinTrain = m_pcaor.pcaor(featureOf_TestinTrain)
 featureOf_TestinReal = m_pcaor.pcaor(featureOf_TestinReal)
