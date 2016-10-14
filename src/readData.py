@@ -4,6 +4,7 @@ sensor_name = ['accelerometerX','accelerometerY','accelerometerZ','gyroscopeX',
 'gyroscopeY','gyroscopeZ']
 
 def ReadData(filename):
+    print "****** read data in %s ******" % (filename)
     sensorData = pd.read_csv(filename)
     
     normalizedSensorData = sensorData.copy()
@@ -12,10 +13,10 @@ def ReadData(filename):
     
     #normalize the accelerometer and gyroscope data
     from sklearn import preprocessing
-    normalizedSensorData = pd.DataFrame(preprocessing.scale(normalizedSensorData),
-                                        normalizedSensorData.index,normalizedSensorData.columns)
+#    normalizedSensorData = pd.DataFrame(preprocessing.scale(normalizedSensorData),
+#                                        normalizedSensorData.index,normalizedSensorData.columns)
 #    normalizedSensorData = normalizedSensorData - normalizedSensorData.mean()
 #    normalizedSensorData = normalizedSensorData / normalizedSensorData.std()
-#    normalizedSensorData = normalizedSensorData / 2048
+    normalizedSensorData = normalizedSensorData / 2048
     
     return (sensorData, normalizedSensorData)
