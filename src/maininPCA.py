@@ -71,7 +71,7 @@ else:
 # get feature of train and test  
 try:
     import utils
-    featureOf_Train = utils.readListfromCSV(9,'ZZZZZZZZZZZZfeatureOf_Train_Datadiv2048_featureUnnor')
+    featureOf_Train = utils.readListfromCSV(9,'featureOf_Train_Datadiv2048_featureUnnor')
     featureOf_TestinTrain = utils.readDataFramefromCSV('featureOf_TestinTrain_Datadiv2048_featureUnnor')
     featureOf_Noise = utils.readDataFramefromCSV('featureOf_Noise_Datadiv2048_featureUnnor')
     featureOf_TestinReal = utils.readDataFramefromCSV('featureOf_TestinReal_Datadiv2048_featureUnnor')
