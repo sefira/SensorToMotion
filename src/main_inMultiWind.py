@@ -160,7 +160,7 @@ featureOf_TestinReal = m_normalizer.normalizer(featureOf_TestinReal)
 featureOf_TestinCatchPass = m_normalizer.normalizer(featureOf_TestinCatchPass)
 
 print "PCA feature:"
-m_pcaor = processingFeature.PCAor("normal",train_data,25)
+m_pcaor = processingFeature.PCAor("normal",train_data,50)
 train_data = m_pcaor.pcaor(train_data)
 featureOf_TestinTrain = m_pcaor.pcaor(featureOf_TestinTrain)
 featureOf_TestinReal = m_pcaor.pcaor(featureOf_TestinReal)

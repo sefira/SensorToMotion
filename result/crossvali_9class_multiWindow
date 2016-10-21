@@ -1,0 +1,78 @@
+#########################################
+#### 9 class
+#### times = 20 num_fold = 2 
+#### using normalized data by div 2048
+#### using robust feature
+#### 25 component normal PCA
+#########################################
+KNN score : 0.948889
+LR score : 0.933333
+RF score : 0.893000
+DT score : 0.881444
+GBDT score : 0.897778
+
+KNN score : 0.948889
+LR score : 0.933333
+RF score : 0.893889
+DT score : 0.868444
+GBDT score : 0.897222
+
+KNN score : 0.948889
+LR score : 0.933333
+RF score : 0.901778
+DT score : 0.872222
+GBDT score : 0.897889
+
+#########################################
+#### 9 class
+#### times = 20 num_fold = 2 
+#### using normalized data by div 2048
+#### using robust feature 
+#### multi window 2 level
+#### 25 component normal PCA
+#########################################
+KNN score : 0.977778
+LR score : 0.911111
+RF score : 0.934667
+DT score : 0.891000
+GBDT score : 0.913333
+
+KNN score : 0.977778
+LR score : 0.911111
+RF score : 0.927222
+DT score : 0.875333
+GBDT score : 0.913111
+
+KNN score : 0.977778
+LR score : 0.911111
+RF score : 0.932889
+DT score : 0.884000
+GBDT score : 0.913000
+
+#########################################
+#### 9 class
+#### times = 20 num_fold = 2 
+#### using normalized data by div 2048
+#### using robust feature 
+#### multi window 2 level
+#### 50 component normal PCA
+#### ~winner~
+#########################################
+KNN score : 0.971111
+LR score : 0.966667
+RF score : 0.916222
+DT score : 0.885556
+GBDT score : 0.921333
+
+KNN score : 0.971111
+LR score : 0.966667
+RF score : 0.905667
+DT score : 0.889556
+GBDT score : 0.921222
+
+KNN score : 0.971111
+LR score : 0.966667
+RF score : 0.901111
+DT score : 0.882667
+GBDT score : 0.921667
+

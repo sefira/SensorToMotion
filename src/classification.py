@@ -122,9 +122,9 @@ def ModethePredict(test_data,predictRes):
     predictMode = []
     for i in range(len(test_data)):
         predictMode.append(
-            mode([predictRes['LR'][i],predictRes['LR'][i],
+            mode([predictRes['LR'][i],#predictRes['LR'][i],
                   #predictRes['KNN'][i],#predictRes['KNN'][i],predictRes['KNN'][i],
-                predictRes['RF'][i],
+                #predictRes['RF'][i],
                 #predictRes['GBDT'][i],#predictRes['GBDT'][i]
                 ])[0][0])
     return predictMode
