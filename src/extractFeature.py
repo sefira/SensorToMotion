@@ -186,3 +186,61 @@ class NormaDatafeatureExtractor(FeatureExtractor):
         return featureOfSensor
         
 # end of class NormaDatafeatureExtractor define
+
+# inherit from NormaDatafeatureExtractor
+class MultiWindowDatafeatureExtractor(NormaDatafeatureExtractor):
+    def __init__(self):
+        self.sensor_name = readData.sensor_name
+        print "***** MultiWindowDatafeatureExtract init ******"
+        
+# Extract feature from multi window. There is a window with step 2
+# and the same length and center as a normal window
+    def move_startpoints_to_mid(self,start_points,windowWidth):
+        offset = (windowWidth - 1) / 2
+        start_points = [x + offset for x in start_points]
+        return start_points
+        
+    def _DealListData(self,m_data,m_startPoints,needBanlance):
+        print "********** multi-windows extract **********"
+        windowWidth = 100
+        offset = (windowWidth - 1) / 2
+        if needBanlance:
+            # if need banlance the data, num limitation set to 50,
+            # so that (number of shoot samples etc.) = (number of run samples etc.) 
+            numLimit = 50
+        else:
+            numLimit = 999999
+        if type(m_startPoints[0]) is list:
+            featureOfSensor = []
+            for i in range(len(m_startPoints)):
+                featureOfSensor.append(pd.DataFrame())
+            for classIndex in range(len(m_startPoints)):
+                mid_points = self.move_startpoints_to_mid(m_startPoints[classIndex],
+                                                         windowWidth)
+                numCount = 0
+                for mid_point in mid_points:
+                    if numCount < numLimit:
+                        numCount = numCount + 1
+                        normal_range = range(mid_point-offset,mid_point+(offset+1)+1)
+                        tempFeature_normal = self._ExtractTraditonFeature(
+                            m_data.loc[normal_range])
+                        step2_range = [(x - normal_range[len(normal_range)/2])  for x in normal_range]
+                        step2_range = [x*2 for x in step2_range]
+                        step2_range = [(x + normal_range[len(normal_range)/2])  for x in step2_range]
+                        tempFeature_mulit = self._ExtractTraditonFeature(
+                            m_data.loc[step2_range])
+                        tempFeature = pd.DataFrame()
+                        tempFeature = tempFeature.append(tempFeature_normal.T)
+                        tempFeature = tempFeature.append(tempFeature_mulit.T)
+                        tempFeature = tempFeature.T
+                        #print(tempFeature.shape)
+                        featureOfSensor[classIndex] = featureOfSensor[classIndex].append(tempFeature)
+                    else:
+                        break
+                featureOfSensor[classIndex].reset_index(drop=True,inplace=True)
+        return featureOfSensor
+        
+# end of class MultiWindowDatafeatureExtractor define
+        
+        
+        
