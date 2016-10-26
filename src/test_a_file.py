@@ -12,7 +12,8 @@ import pandas as pd
 #################################################
 ######## read a given file data to test #########
 #################################################
-test_filename = '../data/216_0805_2.csv'
+filename = "216_0805_2.csv"
+test_filename = '../data/' + filename
 test_sensorData,test_normalizedSensorData = readData.ReadData(test_filename)
 
 m_split_testdata = splitData.splitData(test_sensorData,test_normalizedSensorData)
@@ -23,20 +24,23 @@ m_normalized_testdata = m_split_testdata.GetAllNormalizedData()
 ######## start to extract featrue  ########
 ###########################################
 
-# get feature of train and test  
+# get feature of train and test  import utils
 import utils
 postfix = 'Datadiv2048_featureUnnor_multiWindow'
 featureOf_Train = utils.readListfromCSV(9,'featureOf_Train_' + postfix)
-
-m_featureExtractor = extractFeature.MultiWindowDatafeatureExtractor()
-m_testdata = m_normalized_testdata
-print "extract feature from test data in real"
-featureOf_TestinReal = m_featureExtractor.ExtractFeatureinShipengStyle(
+try:
+    featureOf_TestinReal = utils.readDataFramefromCSV('featureOf_TestinReal_'+postfix+"_"+filename)
+except IOError:    
+    m_featureExtractor = extractFeature.MultiWindowDatafeatureExtractor()
+    m_testdata = m_normalized_testdata
+    print "extract feature from test data in real"
+    featureOf_TestinReal = m_featureExtractor.ExtractFeatureinShipengStyle(
                                     m_testdata,
                                     m_startPoints_testdata,False)
+    utils.saveDataFrametoCSV(featureOf_TestinReal,'featureOf_TestinReal_'+postfix+"_"+filename)
 
-postfix = 'Datadiv2048_featureUnnor_multiWindow'
-utils.saveDataFrametoCSV(featureOf_TestinReal,'featureOf_TestinReal_'+postfix+test_filename)
+else:
+    print "Feature has been loaded!"
 #####################################################
 ####### load train feature for stdarize & pca #######
 #####################################################
