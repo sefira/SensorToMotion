@@ -28,6 +28,46 @@ GBDT score : 0.897889
 #### times = 20 num_fold = 2 
 #### using normalized data by div 2048
 #### using robust feature 
+#### multi window that double first level
+#### 50 component normal PCA
+#########################################
+KNN score : 0.928889
+LR score : 0.962222
+RF score : 0.853444
+DT score : 0.870333
+GBDT score : 0.884667
+
+KNN score : 0.928889
+LR score : 0.962222
+RF score : 0.844778
+DT score : 0.871111
+GBDT score : 0.885333
+
+#########################################
+#### 9 class
+#### times = 20 num_fold = 2 
+#### using normalized data by div 2048
+#### using robust feature 
+#### multi window that double first level
+#### 25 component normal PCA
+#########################################
+KNN score : 0.948889
+LR score : 0.931111
+RF score : 0.896778
+DT score : 0.871111
+GBDT score : 0.894222
+
+KNN score : 0.948889
+LR score : 0.931111
+RF score : 0.888667
+DT score : 0.873444
+GBDT score : 0.894333
+
+#########################################
+#### 9 class
+#### times = 20 num_fold = 2 
+#### using normalized data by div 2048
+#### using robust feature 
 #### multi window 2 level
 #### 25 component normal PCA
 #########################################
@@ -75,4 +115,5 @@ LR score : 0.966667
 RF score : 0.901111
 DT score : 0.882667
 GBDT score : 0.921667
+
 
