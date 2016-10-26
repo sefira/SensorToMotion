@@ -63,7 +63,7 @@ m_classifiers = {'KNN':m_classifier.knn_classifier(),
              'GBDT':m_classifier.gradient_boosting_classifier()  
              }  
 
-def TraininAllClassifiers(train_data,train_label,test_data,test_label):
+def TraininAllClassifiers(classifiers,train_data,train_label,test_data,test_label):
     num_train = train_data.shape[0]
     num_feat = train_data.shape[1]
     num_test = test_data.shape[0]
@@ -74,13 +74,24 @@ def TraininAllClassifiers(train_data,train_label,test_data,test_label):
     for classifiers_name_it in m_classifiers_name:  
         print '******************* %s ********************' % classifiers_name_it  
         start_time = time.time()  
-        m_classifiers[classifiers_name_it] = m_classifiers[classifiers_name_it].fit(train_data, train_label)  
+        classifiers[classifiers_name_it] = classifiers[classifiers_name_it].fit(train_data, train_label)  
         print 'training took %fs!' % (time.time() - start_time)  
-        predict = m_classifiers[classifiers_name_it].predict(test_data)
+        predict = classifiers[classifiers_name_it].predict(test_data)
         accuracy = metrics.accuracy_score(test_label, predict)  
         print 'accuracy: %.2f%%' % (100 * accuracy)
+
+def save_classifiers(classifiers,filename = "../classifiers_model"):
+    print("******************** save classifier model into file: " + filename)
+    import pickle
+    pickle.dump(classifiers, open(filename, 'wb'))
+    
+def load_classifiers(filename = "../classifiers_model"):
+    print("******************** load classifier model from file: " + filename)
+    import pickle
+    classifiers = pickle.load(open(filename, 'rb'))
+    return classifiers
         
-def PrediectinAllClassifiers(test_data):
+def PrediectinAllClassifiers(classifiers,test_data):
     num_test = test_data.shape[0]
     num_feat = test_data.shape[1]
     print '******************** Data Info *********************'  
@@ -91,14 +102,14 @@ def PrediectinAllClassifiers(test_data):
                'RF':[],  
                'DT':[],  
              'GBDT':[]  
-             }  
+             }
     for classifiers_name_it in m_classifiers_name: 
         print "%s is predicting" % (classifiers_name_it)
         predictRes[classifiers_name_it] = \
-             m_classifiers[classifiers_name_it].predict(test_data)
+             classifiers[classifiers_name_it].predict(test_data)
     return predictRes
     
-def CrossValidateClassifiers(times,num_fold,train_data,train_label):
+def CrossValidateClassifiers(classifiers,times,num_fold,train_data,train_label):
     CrossValidationScore = {'KNN':0,  
                'LR':0,  
                'RF':0,  
@@ -110,7 +121,7 @@ def CrossValidateClassifiers(times,num_fold,train_data,train_label):
             CrossValidationScore[classifiers_name_it] = \
                 CrossValidationScore[classifiers_name_it] + \
                 sum(cross_validation.cross_val_score(
-                m_classifiers[classifiers_name_it], train_data,train_label, cv=num_fold)) / num_fold
+                classifiers[classifiers_name_it], train_data,train_label, cv=num_fold)) / num_fold
     for classifiers_name_it in m_classifiers_name:
         CrossValidationScore[classifiers_name_it] = \
             CrossValidationScore[classifiers_name_it] /times

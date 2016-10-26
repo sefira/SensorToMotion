@@ -3,14 +3,15 @@ import splitData
 import extractFeature
 import processingFeature
 from classification import m_classifiers_name
+from classification import m_classifiers
 from classification import CrossValidateClassifiers
 from classification import TraininAllClassifiers
 from classification import PrediectinAllClassifiers
 from classification import ModethePredict
+from classification import save_classifiers
 from visualizePredictResult import PlotTestSeqandPredictRes
 from sklearn import cross_validation
 import pandas as pd
-import matplotlib.pyplot as plt
 
 ###########################################
 ########### start to read data ############
@@ -166,16 +167,17 @@ featureOf_TestinTrain = m_pcaor.pcaor(featureOf_TestinTrain)
 featureOf_TestinReal = m_pcaor.pcaor(featureOf_TestinReal)
 featureOf_TestinCatchPass = m_pcaor.pcaor(featureOf_TestinCatchPass)
 
-print "cross validation:"
-m_cross_validation_score = CrossValidateClassifiers(times=20,num_fold=2,train_data=train_data,train_label=train_label)
-for m_classifiers_name_it in m_classifiers_name:
-    print "%s score : %f" % (m_classifiers_name_it, m_cross_validation_score[m_classifiers_name_it])
+#print "cross validation:"
+#m_cross_validation_score = CrossValidateClassifiers(m_classifiers,times=20,num_fold=2,train_data=train_data,train_label=train_label)
+#for m_classifiers_name_it in m_classifiers_name:
+#    print "%s score : %f" % (m_classifiers_name_it, m_cross_validation_score[m_classifiers_name_it])
 
 train_data,test_data,train_label,test_label = cross_validation.train_test_split(
                             train_data, train_label, test_size=0.1)
 print "training classifiers:"
-TraininAllClassifiers(train_data,train_label,test_data,test_label)
+TraininAllClassifiers(m_classifiers,train_data,train_label,test_data,test_label)
 
+save_classifiers(m_classifiers)
 ###########################################
 ###### preditct and show the result #######
 ###########################################
@@ -185,7 +187,7 @@ try:
     predictRes
 except NameError:
     print "testing in train data:"
-    predictRes = PrediectinAllClassifiers(test_naivedata)
+    predictRes = PrediectinAllClassifiers(m_classifiers,test_naivedata)
 else:
     print "Predict has been extracted!"
 m_predictMode = ModethePredict(test_naivedata,predictRes)
@@ -198,7 +200,7 @@ try:
     predictResinReal
 except NameError:
     print "testing in real test data:"
-    predictResinReal = PrediectinAllClassifiers(test_realdata)
+    predictResinReal = PrediectinAllClassifiers(m_classifiers,test_realdata)
 else:
     print "Predict has been extracted!"
 m_predictMode = ModethePredict(test_realdata,predictResinReal)
@@ -211,7 +213,7 @@ try:
     predictResinCatchPass
 except NameError:
     print "testing in catchpass data:"
-    predictResinCatchPass = PrediectinAllClassifiers(test_catchpassdata)
+    predictResinCatchPass = PrediectinAllClassifiers(m_classifiers,test_catchpassdata)
 else:
     print "Predict has been extracted!"
 m_predictMode = ModethePredict(test_catchpassdata,predictResinCatchPass)
