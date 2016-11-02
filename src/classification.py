@@ -55,7 +55,8 @@ class classifier:
 # end of class classifier define 
 
 m_classifier = classifier()
-m_classifiers_name = ['KNN', 'LR', 'RF', 'DT', 'GBDT']  
+#m_classifiers_name = ['KNN', 'LR', 'RF', 'DT', 'GBDT']  
+m_classifiers_name = ['LR']
 m_classifiers = {'KNN':m_classifier.knn_classifier(),  
                'LR':m_classifier.logistic_regression_classifier(),  
                'RF':m_classifier.random_forest_classifier(),  

@@ -133,13 +133,13 @@ test_data = pd.DataFrame()
 test_label = []
 #label_name = ['stayDribble','runDribble','walk','run','shoot','jump',\
 #                  'noise','catch','pass']  
-label_name = ['shoot','noise','pass']  
+label_name = ['shoot','catch','pass']  
 label_numlabel = {
                 'shoot':3,
-                'noise':0,
+                'catch':7,
                 'pass':8
  }
-featureOf_Train = [featureOf_Train[4],featureOf_Train[6],featureOf_Train[8]]
+featureOf_Train = [featureOf_Train[4],featureOf_Train[7],featureOf_Train[8]]
 for i in range(len(featureOf_Train)):
     for j in range(len(featureOf_Train[i])):
         train_data = train_data.append(featureOf_Train[i].loc[j])
