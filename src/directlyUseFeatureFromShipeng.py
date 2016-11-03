@@ -96,22 +96,31 @@ df = pd.DataFrame(m_predictMode)
 df = df.T
 df.to_csv("../prefile",sep=' ',index = False,header =False)
 
-m_cent = m_normalizer.robust_scaler.center_
-m_scal = m_normalizer.robust_scaler.scale_
-m_cent = pd.DataFrame(m_cent)
-m_scal = pd.DataFrame(m_scal)
-m_cent.to_csv("../center",sep=' ',index = False,header =False)
-m_scal.to_csv("../scalar",sep=' ',index = False,header =False)
+# save center and scalar to file 
+#m_cent = m_normalizer.robust_scaler.center_
+#m_scal = m_normalizer.robust_scaler.scale_
+#m_cent = pd.DataFrame(m_cent)
+#m_scal = pd.DataFrame(m_scal)
+#m_cent.to_csv("../center",sep=' ',index = False,header =False)
+#m_scal.to_csv("../scalar",sep=' ',index = False,header =False)
+
+# save pca component to file 
+#m_mean = m_pcaor.normal_pca.mean_ 
+#m_component = m_pcaor.normal_pca.components_
+#m_component = pd.DataFrame(m_component)
+#m_mean = pd.DataFrame(m_mean)
+#m_component.to_csv("../component",sep=' ',index = False,header =False)
+#m_mean.to_csv("../pca_mean",sep=' ',index = False,header =False)
 
 # manuall classifier
 m_coef_ = (m_classifiers['LR'].coef_)
 m_intercept_ = (m_classifiers['LR'].intercept_)
-i = 2566
+i = 0
 print (train_data[i].dot(m_coef_.T)+m_intercept_.T).argmax(axis=0)
 print train_label[i]
 
 # save coeffient and intercept to file 
-#m_coef_ = pd.DataFrame(m_classifiers['LR'].coef_)
-#m_intercept_ = pd.DataFrame(m_classifiers['LR'].intercept_)
-#m_coef_.to_csv("../LR_coef_",sep=' ',index = False,header =False)
-#m_intercept_.to_csv("../LR_intercept_",sep=' ',index = False,header =False)
+m_coef_ = pd.DataFrame(m_classifiers['LR'].coef_)
+m_intercept_ = pd.DataFrame(m_classifiers['LR'].intercept_)
+m_coef_.to_csv("../LR_coef_",sep=' ',index = False,header =False)
+m_intercept_.to_csv("../LR_intercept_",sep=' ',index = False,header =False)
