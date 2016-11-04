@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import pandas as pd
     
 def PlotTestSeqandPredictRes(testSeq,predict,title):
     predictSeq = testSeq.copy()
@@ -12,4 +13,10 @@ def PlotTestSeqandPredictRes(testSeq,predict,title):
     plt.figure()
     plt.plot(testSeq,'b-')
     plt.plot(predictSeq,'r^')
+    plt.title(title) 
+    
+def PlotPredictRes(predict,title): 
+    predict = pd.DataFrame(predict)
+    plt.figure()
+    plt.plot(predict,'r^')
     plt.title(title)    
