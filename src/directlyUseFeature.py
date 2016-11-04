@@ -43,12 +43,22 @@ train_data = pd.DataFrame()
 train_label = []
 test_data = pd.DataFrame()
 test_label = []
-
+ 
+# choose train data class e.g. only use shoot catch pass
+only_use_3kinds = True
+if only_use_3kinds:
+    # use limited data class 
+    label_name = ['shoot','catch','pass']  
+    label_numlabel = [3,7,8]
+else:
+    # use all data class
+    label_numlabel = [0,1,2,3,4,5,6,7,8]
 print "reshape feature:"
 for i in range(len(feature_of_train)):
     for j in range(len(feature_of_train[i])):
-        train_data = train_data.append(feature_of_train[i].loc[j])
-        train_label.append(label_of_train[i].loc[j])
+        if label_of_train[i].loc[j] in label_numlabel:
+            train_data = train_data.append(feature_of_train[i].loc[j])
+            train_label.append(label_of_train[i].loc[j])
         
 for i in range(len(feature_of_test)):
     for j in range(len(feature_of_test[i])):
@@ -64,7 +74,7 @@ train_data = m_normalizer.normalizer(train_data)
 test_data = m_normalizer.normalizer(test_data)
 
 print "PCA feature:"
-m_pcaor = processingFeature.PCAor("normal",train_data,50)
+m_pcaor = processingFeature.PCAor("normal",train_data,20)
 train_data = m_pcaor.pcaor(train_data)
 test_data = m_pcaor.pcaor(test_data)
 
