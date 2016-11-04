@@ -39,15 +39,15 @@ Files supporting runable file.
    - I have tested the data which be extracted whether need be normalized instead of zooming in same scalar(i.e. div by 2055). Experiment shows normalized data leads better result than zooming in same scalar.
  - processingFeature.py: Process the extracted feature, include normalize and PCA.
    - Normalize feature using :
-   1. z-score with 0-free degree
-   2. z-score with 1-free degree
-   3. minmax normalization
-   4. robust normalization (Quartile range)
+   		1. z-score with 0-free degree
+   		2. z-score with 1-free degree
+   		3. minmax normalization
+   		4. robust normalization (Quartile range)
    - PCA feature using:
-   1. normal PCA
-   2. PCA with whiten
-   3. PCA with robust center and scalar (descript in maininPCA.py)
-   4. kernal PCA
+   		1. normal PCA
+   		2. PCA with whiten
+   		3. PCA with robust center and scalar (descript in maininPCA.py)
+   		4. kernal PCA
  - classification.py: Define the Ensemble learning model and the interface of: 
    - TraininAllClassifiers: Train and test in trainning & testing dataset.
    - save_classifiers, load_classifiers: Save and load the trained model.
